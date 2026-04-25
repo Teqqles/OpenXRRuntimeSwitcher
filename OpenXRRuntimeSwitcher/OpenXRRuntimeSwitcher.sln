@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.37027.9 d17.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenXRRuntimeSwitcher", "OpenXRRuntimeSwitcher.csproj", "{AA6E98F8-CD89-A9A5-4449-FBB1B819160A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{AA6E98F8-CD89-A9A5-4449-FBB1B819160A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AA6E98F8-CD89-A9A5-4449-FBB1B819160A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AA6E98F8-CD89-A9A5-4449-FBB1B819160A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AA6E98F8-CD89-A9A5-4449-FBB1B819160A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {E8FA28B4-3F86-46A2-83A8-F852A5054E9B}
+	EndGlobalSection
+EndGlobal
