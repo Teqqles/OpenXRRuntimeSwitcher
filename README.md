@@ -56,8 +56,6 @@ Click Apply
 
 Restart any VR apps (if needed)
 
-If VR is running, the Apply button will be disabled until the session ends.
-
 🧩 Supported Runtimes
 Runtime
 SteamVR OpenXR	✔
