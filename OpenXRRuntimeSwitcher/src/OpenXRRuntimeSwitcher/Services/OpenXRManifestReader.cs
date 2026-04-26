@@ -4,7 +4,7 @@ using System.Text.Json;
 
 namespace OpenXRRuntimeSwitcher.Services
 {
-    internal static class OpenXRManifestReader
+    public static class OpenXRManifestReader
     {
         /// <summary>
         /// Attempts to read the JSON manifest and extract the "runtime"."name" property.

@@ -1,9 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.14.37027.9 d17.14
+VisualStudioVersion = 17.14.37027.9
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenXRRuntimeSwitcher.Tests", "OpenXRRuntimeSwitcher.Tests.csproj", "{3B041D32-4376-068B-138D-B5C532C6A5E1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenXRRuntimeSwitcher", "..\OpenXRRuntimeSwitcher\OpenXRRuntimeSwitcher.csproj", "{AD67D2AC-D1CB-15FD-25C8-A4E0D74B085B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{3B041D32-4376-068B-138D-B5C532C6A5E1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3B041D32-4376-068B-138D-B5C532C6A5E1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3B041D32-4376-068B-138D-B5C532C6A5E1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AD67D2AC-D1CB-15FD-25C8-A4E0D74B085B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AD67D2AC-D1CB-15FD-25C8-A4E0D74B085B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AD67D2AC-D1CB-15FD-25C8-A4E0D74B085B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AD67D2AC-D1CB-15FD-25C8-A4E0D74B085B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
