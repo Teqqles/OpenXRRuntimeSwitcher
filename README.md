@@ -24,11 +24,17 @@ Icon + friendly name at the top, runtime dropdown, and Apply/Startup controls at
 
 ## 🖼 UI Overview
 
+![selecting new runtime with preview](https://github.com/Teqqles/OpenXRRuntimeSwitcher/raw/main/docs/images/selecting_runtime.png)
+
 The icon and friendly name update automatically when you select a runtime.
+
+![selecting new runtime with preview](https://github.com/Teqqles/OpenXRRuntimeSwitcher/raw/main/docs/images/image_switching.png)
 
 The Apply button is disabled when VR is active.
 
 The tray icon shows the current runtime.
+
+![tray icon](https://github.com/Teqqles/OpenXRRuntimeSwitcher/raw/main/docs/images/tray_icon.png)
 
 ## 🔍 How Runtime Detection Works
 
