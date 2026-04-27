@@ -1,4 +1,3 @@
-using Microsoft.Win32;
 using OpenXRRuntimeSwitcher.Models;
 using OpenXRRuntimeSwitcher.Properties;
 using OpenXRRuntimeSwitcher.Services;
@@ -12,6 +11,7 @@ namespace OpenXRRuntimeSwitcher
         private readonly IHotkeyService _hotkeyService;
         private readonly IRuntimeInfoProvider _runtimeInfoProvider;
         private readonly Config _config;
+        private readonly StartupTaskService _startupTaskService = new(new TaskSchedulerService());
 
         private IReadOnlyList<OpenXRRuntime> _runtimes = Array.Empty<OpenXRRuntime>();
 
@@ -50,8 +50,8 @@ namespace OpenXRRuntimeSwitcher
             _registryDetector.Changed += OnRegistryChanged;
             _registryDetector.Start();
 
-            _startupCheckbox.Checked = IsStartupEnabled();
-
+            TrayLogger.Log("Checking for existing startup: " + (_startupTaskService.TaskExists() ? "Exists" : "Does not exist"));
+            _startupCheckbox.Checked = _startupTaskService.TaskExists();
         }
 
         protected override void OnFormClosing(FormClosingEventArgs e)
@@ -213,33 +213,6 @@ namespace OpenXRRuntimeSwitcher
             catch (Exception ex)
             {
                 TrayLogger.LogException(nameof(OnRegistryChanged), ex);
-            }
-        }
-
-        // Returns whether the app is configured to run at current-user startup
-        private bool IsStartupEnabled()
-        {
-            try
-            {
-                const string runKey = @"Software\Microsoft\Windows\CurrentVersion\Run";
-                const string valueName = "OpenXRRuntimeSwitcher";
-
-                using var key = Registry.CurrentUser.OpenSubKey(runKey, writable: false);
-                if (key is null) return false;
-
-                var value = key.GetValue(valueName)?.ToString();
-                if (string.IsNullOrWhiteSpace(value)) return false;
-
-                // Normalize stored value and current exe path for comparison
-                var stored = value.Trim().Trim('"');
-                var exe = Application.ExecutablePath?.Trim().Trim('"') ?? string.Empty;
-                return string.Equals(stored, exe, StringComparison.OrdinalIgnoreCase)
-                       || Path.GetFileNameWithoutExtension(stored).Equals(Path.GetFileNameWithoutExtension(exe), StringComparison.OrdinalIgnoreCase);
-            }
-            catch (Exception ex)
-            {
-                TrayLogger.LogException(nameof(IsStartupEnabled), ex);
-                return false;
             }
         }
     }
