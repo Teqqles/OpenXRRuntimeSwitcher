@@ -1,9 +1,5 @@
-﻿using System;
-using System.Linq;
+﻿using OpenXRRuntimeSwitcher.Models;
 using System.Text;
-using System.Threading;
-using OpenXRRuntimeSwitcher.Models;
-using OpenXRRuntimeSwitcher.Services.Abstractions;
 
 namespace OpenXRRuntimeSwitcher.Services
 {

@@ -5,7 +5,7 @@ using Xunit;
 using OpenXRRuntimeSwitcher.Services;
 using OpenXRRuntimeSwitcher.Models;
 
-namespace OpenXRRuntimeSwitcher.Tests.Unit;
+namespace OpenXRRuntimeSwitcher.Tests.Unit.Services;
 
 public sealed class RegistryChangeDetectorTests
 {

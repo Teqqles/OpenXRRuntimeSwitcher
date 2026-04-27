@@ -1,12 +1,8 @@
 using OpenXRRuntimeSwitcher.Models;
 using OpenXRRuntimeSwitcher.Services;
 using OpenXRRuntimeSwitcher.Services.Abstractions;
-using System;
-using System.Diagnostics;
-using System.IO;
-using System.Runtime.CompilerServices;
+using OpenXRRuntimeSwitcher.Services.UI;
 using System.Runtime.Versioning;
-using System.Windows.Forms;
 
 [assembly: SupportedOSPlatform("windows10.0")]
 
@@ -16,17 +12,22 @@ internal static class Program
 {
     [System.Runtime.InteropServices.DllImport("kernel32.dll", SetLastError = true, ExactSpelling = true)]
     private static extern bool FreeConsole();
-    
+
     [STAThread]
     private static void Main()
     {
+        Application.EnableVisualStyles();
+        UIInitialization.ApplySystemColorMode(new ColorModeProvider());
+        Application.SetCompatibleTextRenderingDefault(false);
+        FreeConsole();
+
         ApplicationConfiguration.Initialize();
-        
+
         IRegistryService registryService = new WindowsRegistryService();
 
         var runtimeService = new OpenXRRuntimeService(registryService);
 
-        var exePath = Process.GetCurrentProcess().MainModule!.FileName;
+        var exePath = System.Diagnostics.Process.GetCurrentProcess().MainModule!.FileName;
         var exeDir = Path.GetDirectoryName(exePath)!;
         var configPath = Path.Combine(exeDir, "config.ini");
 
@@ -35,11 +36,9 @@ internal static class Program
 
         var hotkeyService = new HotkeyService();
 
-        IRuntimeInfoProvider runtimeInfoProvider = new RuntimeInfoProvider();
+        IRuntimeIconResources resources = new RuntimeIconResources();
+        IRuntimeInfoProvider runtimeInfoProvider = new RuntimeInfoProvider(new DefaultRuntimeIconFactory(new ColorModeProvider(), resources));
 
-        Application.EnableVisualStyles();
-        Application.SetCompatibleTextRenderingDefault(false);
-        FreeConsole();
         Application.Run(new TrayApp(runtimeService, hotkeyService, config, runtimeInfoProvider));
     }
 }

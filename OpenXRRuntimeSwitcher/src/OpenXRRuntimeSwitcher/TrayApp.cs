@@ -3,15 +3,6 @@ using OpenXRRuntimeSwitcher.Models;
 using OpenXRRuntimeSwitcher.Properties;
 using OpenXRRuntimeSwitcher.Services;
 using OpenXRRuntimeSwitcher.Services.Abstractions;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Drawing;
-using System.IO;
-using System.Linq;
-using System.Text.Json;
-using System.Windows.Forms;
-using static System.ComponentModel.Design.ObjectSelectorEditor;
 
 namespace OpenXRRuntimeSwitcher
 {
@@ -33,14 +24,12 @@ namespace OpenXRRuntimeSwitcher
             IOpenXRRuntimeService runtimeService,
             IHotkeyService hotkeyService,
             Config config,
-            IRuntimeInfoProvider runtimeInfoProvider)
+            IRuntimeInfoProvider runtimeInfoProvider) : this()
         {
             _runtimeService = runtimeService ?? throw new ArgumentNullException(nameof(runtimeService));
             _hotkeyService = hotkeyService ?? throw new ArgumentNullException(nameof(hotkeyService));
             _runtimeInfoProvider = runtimeInfoProvider ?? throw new ArgumentNullException(nameof(runtimeInfoProvider));
             _config = config ?? throw new ArgumentNullException(nameof(config));
-
-            InitializeComponent();
 
             // Create runtime-only NotifyIcon here (removed from the designer partial).
             _trayIcon.Visible = true;
@@ -168,7 +157,7 @@ namespace OpenXRRuntimeSwitcher
             return null;
         }
 
-        private void UpdateRuntimeVisuals(bool changed=false, bool noToast=false)
+        private void UpdateRuntimeVisuals(bool changed = false, bool noToast = false)
         {
             try
             {

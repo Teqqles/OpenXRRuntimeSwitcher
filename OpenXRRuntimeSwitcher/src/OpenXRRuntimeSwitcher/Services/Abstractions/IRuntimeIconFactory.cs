@@ -1,6 +1,4 @@
-using System.Drawing;
-
-namespace OpenXRRuntimeSwitcher.Services;
+namespace OpenXRRuntimeSwitcher.Services.Abstractions;
 
 public interface IRuntimeIconFactory
 {

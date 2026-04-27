@@ -1,6 +1,4 @@
 using System.ComponentModel;
-using System.Drawing;
-using System.Windows.Forms;
 using SystemIcons = System.Drawing.SystemIcons;
 
 namespace OpenXRRuntimeSwitcher
@@ -17,14 +15,15 @@ namespace OpenXRRuntimeSwitcher
         private PictureBox _runtimeIcon = default!;
         private Label _activeRuntimeLabel = default!;
         private Label _availableRuntimesLabel = default!;
-        private PictureBox _alertIcon;
+        private PictureBox _alertIcon = default!;
         private IContainer components;
         private Label _runtimeFriendlyLabel = default!;
 
         // Parameterless constructor required by the WinForms designer.
         // Keep this minimal so the designer's CodeDom reader can parse it.
         // The real constructor (defined in `TrayApp.cs`) will initialize runtime-only fields.
-        public TrayApp()
+#pragma warning disable CS8618 // Non-nullable fields are initialzed in the real constructor, not this one.
+        private TrayApp()
         {
             InitializeComponent();
             if (LicenseManager.UsageMode == LicenseUsageMode.Designtime)
@@ -64,6 +63,7 @@ namespace OpenXRRuntimeSwitcher
             // 
             // _applyButton
             // 
+            _applyButton.FlatStyle = FlatStyle.Flat;
             _applyButton.Location = new Point(409, 155);
             _applyButton.Name = "_applyButton";
             _applyButton.Size = new Size(75, 23);
@@ -73,6 +73,7 @@ namespace OpenXRRuntimeSwitcher
             // 
             // _refreshButton
             // 
+            _refreshButton.FlatStyle = FlatStyle.Flat;
             _refreshButton.Location = new Point(317, 155);
             _refreshButton.Name = "_refreshButton";
             _refreshButton.Size = new Size(75, 23);
@@ -138,7 +139,7 @@ namespace OpenXRRuntimeSwitcher
             // 
             // _alertIcon
             // 
-            _alertIcon.Image = (Image)resources.GetObject("_alertIcon.Image");
+            _alertIcon.Image = SystemIcons.Warning.ToBitmap();
             _alertIcon.Location = new Point(159, 109);
             _alertIcon.Name = "_alertIcon";
             _alertIcon.Size = new Size(32, 32);
@@ -147,7 +148,8 @@ namespace OpenXRRuntimeSwitcher
             _alertIcon.TabStop = false;
             // 
             // _trayIcon
-            // 
+            // sadly Winforms designer doesn't support safe casts :(
+#pragma warning disable CS8600 // Disable nullable warning for the unsafe cast from resources.
             _trayIcon.Icon = (Icon)resources.GetObject("_trayIcon.Icon");
             // 
             // TrayApp
@@ -165,7 +167,6 @@ namespace OpenXRRuntimeSwitcher
             Controls.Add(_runtimeFriendlyLabel);
             FormBorderStyle = FormBorderStyle.FixedDialog;
             MaximizeBox = false;
-            MinimizeBox = true;
             Name = "TrayApp";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "OpenXR Runtime Switcher";

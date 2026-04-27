@@ -2,7 +2,7 @@
 using OpenXRRuntimeSwitcher.Services;
 using OpenXRRuntimeSwitcher.Tests.Fakes;
 
-namespace OpenXRRuntimeSwitcher.Tests.Unit;
+namespace OpenXRRuntimeSwitcher.Tests.Unit.Services;
 
 public sealed class OpenXRRuntimeServiceTests
 {

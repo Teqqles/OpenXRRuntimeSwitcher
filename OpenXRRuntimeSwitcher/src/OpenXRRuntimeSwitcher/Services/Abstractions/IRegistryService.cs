@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-
 namespace OpenXRRuntimeSwitcher.Services.Abstractions;
 
 public interface IRegistryService

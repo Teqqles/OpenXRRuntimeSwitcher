@@ -2,7 +2,7 @@ using System.IO;
 using Xunit;
 using OpenXRRuntimeSwitcher.Services;
 
-namespace OpenXRRuntimeSwitcher.Tests.Unit;
+namespace OpenXRRuntimeSwitcher.Tests.Unit.Services;
 
 public sealed class OpenXRManifestReaderTests
 {

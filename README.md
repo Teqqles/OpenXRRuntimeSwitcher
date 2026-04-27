@@ -1,26 +1,27 @@
 # 📘 OpenXR Runtime Switcher
 A lightweight Windows utility for switching between installed OpenXR runtimes.
 
-OpenXR Runtime Switcher is a small and fast tool that lets you change the active OpenXR runtime on Windows without digging through registry keys or vendor specific settings. It automatically detects installed runtimes and shows friendly names and icons.
+OpenXR Runtime Switcher is a small, fast tool that lets you change the active OpenXR runtime on Windows without digging through registry keys or vendor‑specific settings. It automatically detects installed runtimes, shows friendly names and icons, and now adapts to **Windows dark mode**.
+
+---
 
 ## ✨ Features
-Detects installed OpenXR runtimes  
+
+### ✔ Detects installed OpenXR runtimes  
 SteamVR, Meta/Oculus, PimaxXR, Varjo, Windows Mixed Reality, and custom runtimes.
 
-- Friendly names + icons  
-No file paths — the UI shows clean vendor names and logos.
+### ✔ Friendly names + icons  
+Clean vendor names and logos — no file paths.
 
-- Runtime detection via JSON manifest  
-Reads the OpenXR loader’s active runtime JSON for accurate identification.
+### ✔ Dark‑mode‑aware icons (NEW)  
+The app now detects Windows dark mode (via `.NET 9`’s `Application.IsDarkModeEnabled`) and automatically switches to dark‑mode icon variants for all supported runtimes.
 
-- Tray icon  
-Quick access from the system tray.
+### ✔ System colour mode (NEW)  
+The UI now follows the system’s colour mode using:
 
-- Run at startup  
-Automatically launch the tool when Windows starts.
-
-- Clean, modern UI layout  
-Icon + friendly name at the top, runtime dropdown, and Apply/Startup controls at the bottom.
+```csharp
+Application.SetColorMode(SystemColorMode.System);
+```
 
 ## 🖼 UI Overview
 

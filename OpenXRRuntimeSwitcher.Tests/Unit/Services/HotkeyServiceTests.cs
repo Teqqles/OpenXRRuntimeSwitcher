@@ -5,7 +5,7 @@ using System.Windows.Forms;
 using Xunit;
 using OpenXRRuntimeSwitcher.Services;
 
-namespace OpenXRRuntimeSwitcher.Tests.Unit;
+namespace OpenXRRuntimeSwitcher.Tests.Unit.Services;
 
 public sealed class HotkeyServiceTests
 {
@@ -36,13 +36,13 @@ public sealed class HotkeyServiceTests
         var map = new Dictionary<int, string> { [42] = "Switch" };
         field!.SetValue(svc, map);
 
-        var msg = Message.Create(IntPtr.Zero, 0x0312, new IntPtr(42), IntPtr.Zero); // WM_HOTKEY = 0x0312
+        var msg = Message.Create(nint.Zero, 0x0312, new nint(42), nint.Zero); // WM_HOTKEY = 0x0312
         var ok = svc.TryGetActionFromMessage(ref msg, out var action);
 
         Assert.True(ok);
         Assert.Equal("Switch", action);
 
-        var notHot = Message.Create(IntPtr.Zero, 0x0100, IntPtr.Zero, IntPtr.Zero); // WM_KEYDOWN
+        var notHot = Message.Create(nint.Zero, 0x0100, nint.Zero, nint.Zero); // WM_KEYDOWN
         var nok = svc.TryGetActionFromMessage(ref notHot, out var noAction);
         Assert.False(nok);
         Assert.Equal(string.Empty, noAction);
