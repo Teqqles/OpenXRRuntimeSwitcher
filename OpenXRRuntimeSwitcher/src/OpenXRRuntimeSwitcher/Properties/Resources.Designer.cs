@@ -73,9 +73,29 @@ namespace OpenXRRuntimeSwitcher.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        public static System.Drawing.Bitmap MetaIconDarkMode {
+            get {
+                object obj = ResourceManager.GetObject("MetaIconDarkMode", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         public static System.Drawing.Bitmap PimaxIcon {
             get {
                 object obj = ResourceManager.GetObject("PimaxIcon", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap PimaxIconDarkMode {
+            get {
+                object obj = ResourceManager.GetObject("PimaxIconDarkMode", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -93,9 +113,29 @@ namespace OpenXRRuntimeSwitcher.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        public static System.Drawing.Bitmap SteamVRIconDarkMode {
+            get {
+                object obj = ResourceManager.GetObject("SteamVRIconDarkMode", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         public static System.Drawing.Bitmap UnknownIcon {
             get {
                 object obj = ResourceManager.GetObject("UnknownIcon", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap UnknownIconDarkMode {
+            get {
+                object obj = ResourceManager.GetObject("UnknownIconDarkMode", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -113,6 +153,16 @@ namespace OpenXRRuntimeSwitcher.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        public static System.Drawing.Bitmap VarjoIconDarkMode {
+            get {
+                object obj = ResourceManager.GetObject("VarjoIconDarkMode", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         public static System.Drawing.Bitmap VirtualDesktopIcon {
             get {
                 object obj = ResourceManager.GetObject("VirtualDesktopIcon", resourceCulture);
@@ -123,9 +173,29 @@ namespace OpenXRRuntimeSwitcher.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        public static System.Drawing.Bitmap VirtualDesktopIconDarkMode {
+            get {
+                object obj = ResourceManager.GetObject("VirtualDesktopIconDarkMode", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         public static System.Drawing.Bitmap WMRIcon {
             get {
                 object obj = ResourceManager.GetObject("WMRIcon", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap WMRIconDarkMode {
+            get {
+                object obj = ResourceManager.GetObject("WMRIconDarkMode", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

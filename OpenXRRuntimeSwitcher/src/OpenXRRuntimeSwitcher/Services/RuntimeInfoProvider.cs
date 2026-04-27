@@ -1,6 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Drawing;
+using OpenXRRuntimeSwitcher.Services.Abstractions;
 
 namespace OpenXRRuntimeSwitcher.Services;
 
@@ -12,28 +10,30 @@ public sealed class RuntimeInfoProvider : IRuntimeInfoProvider
 {
     private readonly Dictionary<string, RuntimeInfo> _map;
 
-    public RuntimeInfoProvider(IRuntimeIconFactory? iconFactory = null)
+    public RuntimeInfoProvider(IRuntimeIconFactory iconFactory)
     {
-        var factory = iconFactory ?? new DefaultRuntimeIconFactory();
 
         _map = new Dictionary<string, RuntimeInfo>(StringComparer.OrdinalIgnoreCase)
         {
-            { "steamxr", new RuntimeInfo("SteamVR OpenXR", factory.GetIcon("steamxr")) },
-            { "oculus_openxr", new RuntimeInfo("Meta OpenXR", factory.GetIcon("oculus_openxr")) },
-            { "pimax", new RuntimeInfo("PimaxXR", factory.GetIcon("pimax")) },
-            { "mixedreality", new RuntimeInfo("Windows Mixed Reality", factory.GetIcon("mixedreality")) },
-            { "varjo", new RuntimeInfo("Varjo OpenXR", factory.GetIcon("varjo")) },
-            { "virtualdesktop", new RuntimeInfo("VirtualDesktopXR", factory.GetIcon("virtualdesktop")) }
+            { "steamxr", new RuntimeInfo("SteamVR OpenXR", iconFactory.GetIcon("steamxr")) },
+            { "oculus_openxr", new RuntimeInfo("Meta OpenXR", iconFactory.GetIcon("oculus_openxr")) },
+            { "pimax", new RuntimeInfo("PimaxXR", iconFactory.GetIcon("pimax")) },
+            { "mixedreality", new RuntimeInfo("Windows Mixed Reality", iconFactory.GetIcon("mixedreality")) },
+            { "varjo", new RuntimeInfo("Varjo OpenXR", iconFactory.GetIcon("varjo")) },
+            { "virtualdesktop", new RuntimeInfo("Virtual Desktop OpenXR", iconFactory.GetIcon("virtualdesktop")) }
         };
     }
 
     public bool TryGetInfo(string key, out RuntimeInfo info)
     {
+        TrayLogger.Log($"Trying to get runtime info for key: '{key}'");
         if (_map.TryGetValue(key ?? string.Empty, out var foundInfo))
         {
             info = foundInfo;
+            TrayLogger.Log($"Found runtime info: Name='{info.FriendlyName ?? string.Empty}'");
             return true;
         }
+        TrayLogger.Log($"No runtime info found for key: '{key}'");
         info = null!;
         return false;
     }

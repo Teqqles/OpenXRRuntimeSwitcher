@@ -1,4 +1,3 @@
-using Xunit;
 using OpenXRRuntimeSwitcher.Services.Abstractions;
 
 namespace OpenXRRuntimeSwitcher.Tests.Integration;

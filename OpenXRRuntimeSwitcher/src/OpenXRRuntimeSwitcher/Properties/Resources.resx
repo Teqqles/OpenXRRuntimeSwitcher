@@ -119,24 +119,45 @@
   </resheader>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="MetaIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\MetaIcon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <value>..\Resources\LightMode\MetaIcon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="PimaxIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\PimaxIcon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <value>..\Resources\LightMode\PimaxIcon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="SteamVRIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\SteamVRIcon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <value>..\Resources\LightMode\SteamVRIcon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="UnknownIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\UnknownIcon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <value>..\Resources\LightMode\UnknownIcon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="VarjoIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\VarjoIcon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <value>..\Resources\LightMode\VarjoIcon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="VirtualDesktopIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\VirtualDesktopIcon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <value>..\Resources\LightMode\VirtualDesktopIcon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="WMRIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\WMRIcon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <value>..\Resources\LightMode\WMRIcon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="MetaIconDarkMode" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\DarkMode\MetaIcon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="PimaxIconDarkMode" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\DarkMode\PimaxIcon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="SteamVRIconDarkMode" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\DarkMode\SteamVRIcon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="UnknownIconDarkMode" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\DarkMode\UnknownIcon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="VarjoIconDarkMode" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\DarkMode\VarjoIcon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="VirtualDesktopIconDarkMode" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\DarkMode\VirtualDesktopIcon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="WMRIconDarkMode" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\DarkMode\WMRIcon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>
