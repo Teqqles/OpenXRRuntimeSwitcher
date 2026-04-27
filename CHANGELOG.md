@@ -1,10 +1,24 @@
 # Changelog
 
+## [Unreleased] - 2026-04-27
+
+### Added
+
+- Dark Mode.  The application now respects the user settings in Windows.
+
+### Changed
+
+- File structure to better conform to our own CONTRIBUTING guide.
+
+### Fixed
+
+- Application starts with Windows.  Previous implementation does not work with UAC.
+
 ## [0.1.1] - 2026-04-25
 
 ### Added
 
-- Installer, this is a work in progress and currently tested.
+- Installer, this is a work in progress and currently untested.
 - Ability to minimize the window and this now does that to system tray.
 
 ### Changed
