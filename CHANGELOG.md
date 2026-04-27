@@ -5,6 +5,7 @@
 ### Added
 
 - Dark Mode.  The application now respects the user settings in Windows.
+- Exported brand icons, so Users can use them in their own workflows (e.g. Stream Deck actions)
 
 ### Changed
 
