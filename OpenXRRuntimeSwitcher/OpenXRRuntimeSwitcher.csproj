@@ -20,6 +20,9 @@
 	  <None Remove="tests\**" />
 	</ItemGroup>
 	<ItemGroup>
+	  <PackageReference Include="TaskScheduler" Version="2.12.2" />
+	</ItemGroup>
+	<ItemGroup>
 	  <Compile Update="Properties\Resources.Designer.cs">
 	    <DesignTime>True</DesignTime>
 	    <AutoGen>True</AutoGen>

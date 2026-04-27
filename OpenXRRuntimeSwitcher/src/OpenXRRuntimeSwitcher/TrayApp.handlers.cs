@@ -1,4 +1,3 @@
-using Microsoft.Win32;
 using OpenXRRuntimeSwitcher.Services;
 
 namespace OpenXRRuntimeSwitcher
@@ -65,44 +64,31 @@ namespace OpenXRRuntimeSwitcher
         // Toggle whether the app runs at current-user startup (HKCU\...\Run)
         // Later on, we will likely only elevate when the user clicks "Apply",
         // for now we will just toggle the registry key and let the user deal with UAC if they have it enabled.
-        private void ToggleStartup(bool enable)
+        private bool ToggleStartup(bool enable)
         {
-            const string runKey = @"Software\Microsoft\Windows\CurrentVersion\Run";
-            const string valueName = "OpenXRRuntimeSwitcher";
-
             try
             {
-                using var key = Registry.CurrentUser.OpenSubKey(runKey, writable: true) ?? Registry.CurrentUser.CreateSubKey(runKey);
-                if (key is null)
-                {
-                    TrayLogger.Log("Failed to open/create Run registry key for startup toggle.");
-                    return;
-                }
-
                 if (enable)
-                {
-                    var exePath = $"\"{Application.ExecutablePath}\"";
-                    key.SetValue(valueName, exePath, RegistryValueKind.String);
-                    TrayLogger.Log("Enabled startup.");
-                }
+                    _startupTaskService.CreateTask();
                 else
-                {
-                    if (key.GetValueNames().Length > 0 && key.GetValue(valueName) is not null)
-                    {
-                        key.DeleteValue(valueName, throwOnMissingValue: false);
-                        TrayLogger.Log("Disabled startup.");
-                    }
-                }
+                    _startupTaskService.DeleteTask();
             }
             catch (Exception ex)
             {
-                TrayLogger.LogException(nameof(ToggleStartup), ex);
-                MessageBox.Show(this, $"Failed to update startup setting: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                // Revert checkbox state to reflect reality - use named handler (designer-safe)
-                _startupCheckbox.CheckedChanged -= StartupCheckbox_CheckedChanged;
-                _startupCheckbox.Checked = IsStartupEnabled();
-                _startupCheckbox.CheckedChanged += StartupCheckbox_CheckedChanged;
+                MessageBox.Show(
+                    $"Failed to update startup task:\n\n{ex.Message}",
+                    "Error",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error
+                );
+
+                TrayLogger.LogException("Error toggling startup task", ex);
+
+                // Revert checkbox to actual state
+                return _startupTaskService.TaskExists();
             }
+
+            return _startupTaskService.TaskExists();
         }
 
         protected override void OnResize(EventArgs e)
