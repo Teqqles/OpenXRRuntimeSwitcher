@@ -77,6 +77,36 @@ Restart any VR apps (if needed)
 | Windows Mixed Reality |	? | Untested |
 | Custom runtimes |	✔ | |
 
+## Alternatives
+
+| Feature / Capability | **Teqqles / OpenXRRuntimeSwitcher** | **WaGi‑Coding / OpenXR‑Runtime‑Switcher** | **Ybalrid / OpenXR‑Runtime‑Manager** |
+| --- | --- | --- | --- |
+| **Primary purpose** | Modern Windows utility to switch OpenXR runtimes with friendly UI and hotkeys | Simple tool to switch system default OpenXR runtime | Utility to view & switch current OpenXR runtime |
+| **UI framework** | WinForms (.NET 9 features, dark‑mode aware) | WinForms (older .NET style) | Fluent UI (recent upgrade) |
+| **Runtime detection method** | Registry + JSON manifest parsing (accurate friendly names) | Registry presets; does *not* validate JSON | OpenXR enumeration + known manifest paths |
+| **Supported runtimes** | SteamVR, Meta/Oculus, PimaxXR, Varjo (untested), WMR (untested), custom | SteamVR, Oculus/Meta, ViveVR, WMR, Varjo, custom | SteamVR, Oculus, MixedRealityRuntime, Varjo |
+| **Custom runtime support** | ✔ Add custom runtimes (read from registry only) | ✔ Add custom runtimes | ❌ No |
+| **Dark mode support** | ✔ Full dark‑mode UI + icon variants | ❌ None | ✔ Fluent UI (implicitly dark‑mode friendly) |
+| **Tray icon integration** | ✔ Shows current runtime | ❌ None | ❌ None |
+| **Admin rights handling** | Requires admin | Requires admin | Requires admin |
+| **32‑bit runtime handling** | ❌ Does not handle 32‑bit | Not mentioned | ❌ Does not handle 32‑bit |
+| **Installer / packaging** | ZIP | Standalone executable | Standalone executable |
+| **Last updated** | **Active (2026)** | 2022 | **Active (2026)** |
+| **Stars / activity** | 1 star (new project) | 102 stars | 18 stars |
+| **License** | MIT | Custom license (similar to MIT) | MIT |
+
+### 🔎 Summary
+Teqqles/OpenXRRuntimeSwitcher (this repo)
+Dark mode, icons, accurate detection, tray integration and hotkeys.
+
+[WaGi‑Coding/OpenXR-Runtime-Switcher](https://github.com/WaGi-Coding/OpenXR-Runtime-Switcher)
+The classic tool. Simple, functional, supports many runtimes, but lacks safety checks and modern UI. Requires admin elevation and doesn’t validate JSON manifests.
+
+[Ybalrid/OpenXR-Runtime-Manager](https://github.com/Ybalrid/OpenXR-Runtime-Manager/tree/master)
+Lightweight and clean, recently updated with Fluent UI. Good detection logic but fewer features overall, no tray icon, and hotkeys.
+
+If you know of another tool not mentioned above, submit an issue!
+
 ## 🛠 Development Notes
 
 Written in C# / .NET
