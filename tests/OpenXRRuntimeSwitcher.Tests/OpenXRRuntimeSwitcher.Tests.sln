@@ -5,7 +5,7 @@ VisualStudioVersion = 17.14.37027.9
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenXRRuntimeSwitcher.Tests", "OpenXRRuntimeSwitcher.Tests.csproj", "{3B041D32-4376-068B-138D-B5C532C6A5E1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenXRRuntimeSwitcher", "..\OpenXRRuntimeSwitcher\OpenXRRuntimeSwitcher.csproj", "{AD67D2AC-D1CB-15FD-25C8-A4E0D74B085B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenXRRuntimeSwitcher", "..\..\src\OpenXRRuntimeSwitcher\OpenXRRuntimeSwitcher.csproj", "{AD67D2AC-D1CB-15FD-25C8-A4E0D74B085B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

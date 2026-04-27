@@ -17,7 +17,7 @@
   </ItemGroup>
 
 <ItemGroup>
-  <ProjectReference Include="..\OpenXRRuntimeSwitcher\OpenXRRuntimeSwitcher.csproj" />
+  <ProjectReference Include="..\..\src\OpenXRRuntimeSwitcher\OpenXRRuntimeSwitcher.csproj" />
 </ItemGroup>
 
   <ItemGroup>
