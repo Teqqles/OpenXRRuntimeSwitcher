@@ -106,7 +106,7 @@ Your custom runtime is saved and immediately available in the dropdown.
 | **Tray icon integration** | ✔ Shows current runtime | ❌ None | ❌ None |
 | **Admin rights handling** | Requires admin | Requires admin | Requires admin |
 | **32‑bit runtime handling** | ❌ Does not handle 32‑bit | Not mentioned | ❌ Does not handle 32‑bit |
-| **Installer / packaging** | ZIP | Standalone executable | Standalone executable |
+| **Installer / packaging** | NSIS installer + ZIP | Standalone executable | Standalone executable |
 | **Last updated** | **Active (2026)** | 2022 | **Active (2026)** |
 | **Stars / activity** | 1 star (new project) | 102 stars | 18 stars |
 | **License** | MIT | Custom license (similar to MIT) | MIT |
@@ -132,6 +132,32 @@ Uses WinForms for the UI
 Icons stored in Resources/ and embedded via .resx
 
 Runtime detection uses JSON parsing, not filename guessing
+
+### Building Releases
+
+The project includes build automation for creating both installer and ZIP releases:
+
+**Requirements:**
+- .NET 9 SDK
+- NSIS (install via `choco install nsis` or from https://nsis.sourceforge.io/)
+
+**Quick Build:**
+```powershell
+.\build-installer.ps1
+```
+
+This creates both release formats in the `publish/` directory:
+- **Installer**: `OpenXRRuntimeSwitcher-Setup-<version>.exe`
+  - Program Files installation
+  - Desktop and Start Menu shortcuts
+  - Optional "Run at startup" via Task Scheduler (supports UAC elevation)
+  - Windows Add/Remove Programs integration
+- **ZIP**: `OpenXRRuntimeSwitcher-<version>.zip`
+  - Portable version for manual extraction
+
+Version is automatically extracted from the `.csproj` file.
+
+For more details, see [`src/OpenXRRuntimeSwitcher/installer/README-INSTALLER.md`](src/OpenXRRuntimeSwitcher/installer/README-INSTALLER.md)
 
 ## 📄 License
 
