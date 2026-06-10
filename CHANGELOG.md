@@ -4,17 +4,21 @@
 
 ### Added
 
+- Option to disable toast notifications (#16)
+  - Checkbox in UI to toggle toast notifications on/off
+  - Persists to config.ini [General] section
+  - Setting applies immediately without restart
 - NSIS installer with automated build script (#3)
-  - Professional Windows installer with Add/Remove Programs integration
+  - Windows installer with Add/Remove Programs integration
   - Desktop and Start Menu shortcuts
   - Optional "Run at startup" using Task Scheduler (supports UAC elevation)
   - PowerShell build script (`build-installer.ps1`) automates publish + installer creation
-  - Comprehensive installer documentation
-- Comprehensive manifest validation before switching runtimes (#13)
+  - Installer documentation
+- Manifest validation before switching runtimes (#13)
   - Validates manifest format (file_format_version, runtime object, library_path)
-  - Verifies runtime DLL actually exists on disk
+  - Verifies runtime DLL exists on disk
   - Resolves relative and absolute library paths correctly
-  - Shows clear error messages when validation fails
+  - Shows error messages when validation fails
 - Dark Mode.  The application now respects the user settings in Windows.
 - Exported brand icons, so Users can use them in their own workflows (e.g. Stream Deck actions)
 

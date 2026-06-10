@@ -12,6 +12,7 @@ namespace OpenXRRuntimeSwitcher
         private Button _refreshButton = default!;
         private Label _warningLabel = default!;
         private CheckBox _startupCheckbox = default!;
+        private CheckBox _disableToastCheckbox = default!;
         private PictureBox _runtimeIcon = default!;
         private Label _activeRuntimeLabel = default!;
         private Label _availableRuntimesLabel = default!;
@@ -42,6 +43,7 @@ namespace OpenXRRuntimeSwitcher
             _refreshButton = new Button();
             _warningLabel = new Label();
             _startupCheckbox = new CheckBox();
+            _disableToastCheckbox = new CheckBox();
             _runtimeIcon = new PictureBox();
             _runtimeFriendlyLabel = new Label();
             _activeRuntimeLabel = new Label();
@@ -91,14 +93,23 @@ namespace OpenXRRuntimeSwitcher
             _warningLabel.Text = "Don't change this if you are already running a VR session!";
             // 
             // _startupCheckbox
-            // 
+            //
             _startupCheckbox.Location = new Point(12, 155);
             _startupCheckbox.Name = "_startupCheckbox";
             _startupCheckbox.Size = new Size(154, 24);
             _startupCheckbox.TabIndex = 4;
             _startupCheckbox.Text = "Start with Windows";
             _startupCheckbox.CheckedChanged += StartupCheckbox_CheckedChanged;
-            // 
+            //
+            // _disableToastCheckbox
+            //
+            _disableToastCheckbox.Location = new Point(172, 155);
+            _disableToastCheckbox.Name = "_disableToastCheckbox";
+            _disableToastCheckbox.Size = new Size(139, 24);
+            _disableToastCheckbox.TabIndex = 5;
+            _disableToastCheckbox.Text = "Disable toast notifications";
+            _disableToastCheckbox.CheckedChanged += DisableToastCheckbox_CheckedChanged;
+            //
             // _runtimeIcon
             // 
             _runtimeIcon.Location = new Point(12, 12);
@@ -163,6 +174,7 @@ namespace OpenXRRuntimeSwitcher
             Controls.Add(_refreshButton);
             Controls.Add(_warningLabel);
             Controls.Add(_startupCheckbox);
+            Controls.Add(_disableToastCheckbox);
             Controls.Add(_runtimeIcon);
             Controls.Add(_runtimeFriendlyLabel);
             FormBorderStyle = FormBorderStyle.FixedDialog;
@@ -212,6 +224,11 @@ namespace OpenXRRuntimeSwitcher
         private void StartupCheckbox_CheckedChanged(object? sender, System.EventArgs e)
         {
             ToggleStartup(_startupCheckbox.Checked);
+        }
+
+        private void DisableToastCheckbox_CheckedChanged(object? sender, System.EventArgs e)
+        {
+            SaveDisableToastSetting(_disableToastCheckbox.Checked);
         }
 
         private void RuntimeIcon_MouseEnter(object? sender, System.EventArgs e)
