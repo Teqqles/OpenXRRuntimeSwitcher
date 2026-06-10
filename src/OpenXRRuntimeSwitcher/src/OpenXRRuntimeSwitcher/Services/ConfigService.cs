@@ -1,17 +1,23 @@
-﻿using OpenXRRuntimeSwitcher.Models;
-using System.Text;
+using OpenXRRuntimeSwitcher.Models;
+using IniParser;
+using IniParser.Model;
 
 namespace OpenXRRuntimeSwitcher.Services;
 
 public interface IConfigService
 {
     Config Load(string path);
+    void UpdateDisableToast(bool disableToast);
 }
 
 public sealed class ConfigService : IConfigService
 {
+    private readonly FileIniDataParser _parser = new();
+    private string? _lastLoadedPath;
+
     public Config Load(string path)
     {
+        _lastLoadedPath = path;
         TrayLogger.Log($"Loading config from {path}...");
         if (!File.Exists(path))
         {
@@ -23,39 +29,25 @@ public sealed class ConfigService : IConfigService
             };
         }
 
+        var data = _parser.ReadFile(path);
         var mappings = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
         var disableToast = false;
-        string? section = null;
 
-        foreach (var rawLine in File.ReadAllLines(path, Encoding.UTF8))
+        if (data.Sections.ContainsSection("General"))
         {
-            var line = rawLine.Trim();
-            if (string.IsNullOrWhiteSpace(line) || line.StartsWith(";"))
-                continue;
-
-            if (line.StartsWith("[") && line.EndsWith("]"))
+            var general = data["General"];
+            if (general.ContainsKey("disableToast"))
             {
-                section = line[1..^1].Trim();
-                continue;
+                var value = general["disableToast"];
+                disableToast = value == "1" || string.Equals(value, "true", StringComparison.OrdinalIgnoreCase);
             }
+        }
 
-            var kv = line.Split('=', 2);
-            if (kv.Length != 2) continue;
-
-            var key = kv[0].Trim();
-            var value = kv[1].Trim();
-
-            if (string.Equals(section, "General", StringComparison.OrdinalIgnoreCase))
+        if (data.Sections.ContainsSection("Hotkeys"))
+        {
+            foreach (var key in data["Hotkeys"])
             {
-                if (string.Equals(key, "DisableToast", StringComparison.OrdinalIgnoreCase))
-                {
-                    disableToast = value == "1" || string.Equals(value, "true", StringComparison.OrdinalIgnoreCase);
-                }
-            }
-            else if (string.Equals(section, "Hotkeys", StringComparison.OrdinalIgnoreCase))
-            {
-                if (!string.IsNullOrEmpty(key) && !string.IsNullOrEmpty(value))
-                    mappings[key] = value;
+                mappings[key.KeyName] = key.Value;
             }
         }
 
@@ -67,5 +59,32 @@ public sealed class ConfigService : IConfigService
             Mappings = mappings,
             DisableToast = disableToast
         };
+    }
+
+    public void UpdateDisableToast(bool disableToast)
+    {
+        if (_lastLoadedPath == null)
+            throw new InvalidOperationException("Cannot update config before Load has been called");
+
+        IniData data;
+
+        if (File.Exists(_lastLoadedPath))
+        {
+            data = _parser.ReadFile(_lastLoadedPath);
+        }
+        else
+        {
+            data = new IniData();
+        }
+
+        if (!data.Sections.ContainsSection("General"))
+        {
+            data.Sections.AddSection("General");
+        }
+
+        data["General"]["disableToast"] = disableToast ? "1" : "0";
+
+        _parser.WriteFile(_lastLoadedPath, data);
+        TrayLogger.Log($"Updated disableToast={disableToast} in config");
     }
 }
