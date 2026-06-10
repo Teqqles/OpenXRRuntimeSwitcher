@@ -45,6 +45,6 @@ internal static class Program
         IRuntimeIconFactory iconFactory = new DefaultRuntimeIconFactory(new ColorModeProvider(), resources);
         IRuntimeInfoProvider runtimeInfoProvider = new RuntimeInfoProvider(iconFactory);
 
-        Application.Run(new TrayApp(runtimeService, hotkeyService, config, runtimeInfoProvider, customRuntimeService, iconFactory, customRuntimesPath, configPath));
+        Application.Run(new TrayApp(runtimeService, hotkeyService, configService, config, runtimeInfoProvider, customRuntimeService, iconFactory, customRuntimesPath));
     }
 }

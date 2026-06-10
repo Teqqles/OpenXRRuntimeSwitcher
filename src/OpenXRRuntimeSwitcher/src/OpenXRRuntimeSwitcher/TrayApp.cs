@@ -12,10 +12,10 @@ namespace OpenXRRuntimeSwitcher
         private readonly IRuntimeInfoProvider _runtimeInfoProvider;
         private readonly ICustomRuntimeService _customRuntimeService;
         private readonly IRuntimeIconFactory _iconFactory;
+        private readonly IConfigService _configService;
         private readonly Config _config;
         private readonly StartupTaskService _startupTaskService = new(new TaskSchedulerService());
         private readonly string _customRuntimesPath;
-        private readonly string _configPath;
         private bool _savedDisableToastState;
 
         private IReadOnlyList<OpenXRRuntime> _runtimes = Array.Empty<OpenXRRuntime>();
@@ -29,21 +29,21 @@ namespace OpenXRRuntimeSwitcher
         public TrayApp(
             IOpenXRRuntimeService runtimeService,
             IHotkeyService hotkeyService,
+            IConfigService configService,
             Config config,
             IRuntimeInfoProvider runtimeInfoProvider,
             ICustomRuntimeService customRuntimeService,
             IRuntimeIconFactory iconFactory,
-            string customRuntimesPath,
-            string configPath) : this()
+            string customRuntimesPath) : this()
         {
             _runtimeService = runtimeService ?? throw new ArgumentNullException(nameof(runtimeService));
             _hotkeyService = hotkeyService ?? throw new ArgumentNullException(nameof(hotkeyService));
+            _configService = configService ?? throw new ArgumentNullException(nameof(configService));
             _runtimeInfoProvider = runtimeInfoProvider ?? throw new ArgumentNullException(nameof(runtimeInfoProvider));
             _customRuntimeService = customRuntimeService ?? throw new ArgumentNullException(nameof(customRuntimeService));
             _iconFactory = iconFactory ?? throw new ArgumentNullException(nameof(iconFactory));
             _config = config ?? throw new ArgumentNullException(nameof(config));
             _customRuntimesPath = customRuntimesPath;
-            _configPath = configPath;
 
             // Create runtime-only NotifyIcon here (removed from the designer partial).
             _trayIcon.Visible = true;
@@ -77,54 +77,8 @@ namespace OpenXRRuntimeSwitcher
 
             try
             {
-                var lines = File.Exists(_configPath)
-                    ? File.ReadAllLines(_configPath).ToList()
-                    : new List<string>();
-
-                var generalSectionIndex = -1;
-                var disableToastLineIndex = -1;
-                string? currentSection = null;
-
-                for (int i = 0; i < lines.Count; i++)
-                {
-                    var line = lines[i].Trim();
-                    if (line.StartsWith("[") && line.EndsWith("]"))
-                    {
-                        currentSection = line[1..^1].Trim();
-                        if (string.Equals(currentSection, "General", StringComparison.OrdinalIgnoreCase))
-                            generalSectionIndex = i;
-                        continue;
-                    }
-
-                    if (string.Equals(currentSection, "General", StringComparison.OrdinalIgnoreCase))
-                    {
-                        var kv = line.Split('=', 2);
-                        if (kv.Length == 2 && string.Equals(kv[0].Trim(), "disableToast", StringComparison.OrdinalIgnoreCase))
-                        {
-                            disableToastLineIndex = i;
-                            break;
-                        }
-                    }
-                }
-
-                if (disableToastLineIndex >= 0)
-                {
-                    lines[disableToastLineIndex] = $"disableToast={(disableToast ? "1" : "0")}";
-                }
-                else if (generalSectionIndex >= 0)
-                {
-                    lines.Insert(generalSectionIndex + 1, $"disableToast={(disableToast ? "1" : "0")}");
-                }
-                else
-                {
-                    lines.Insert(0, "[General]");
-                    lines.Insert(1, $"disableToast={(disableToast ? "1" : "0")}");
-                    lines.Insert(2, "");
-                }
-
-                File.WriteAllLines(_configPath, lines);
+                _configService.UpdateDisableToast(disableToast);
                 _savedDisableToastState = disableToast;
-                TrayLogger.Log($"Saved disableToast={disableToast} to config");
             }
             catch (Exception ex)
             {
