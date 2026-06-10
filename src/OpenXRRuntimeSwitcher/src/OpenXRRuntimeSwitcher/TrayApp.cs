@@ -266,7 +266,7 @@ namespace OpenXRRuntimeSwitcher
 
                 if (changed)
                 {
-                    if (!noToast && !_config.DisableToast)
+                    if (!noToast && !_savedDisableToastState)
                         _trayIcon.ShowBalloonTip(2000, "OpenXR Runtime Switched", $"Active runtime: {resolved?.FriendlyName ?? selected.Name ?? CustomRuntimeText}", ToolTipIcon.Info);
 
                     _trayIcon.Icon = Icon.FromHandle(((Bitmap)(resolved?.Icon ?? _iconFactory.GetUnknownIcon())).GetHicon());
