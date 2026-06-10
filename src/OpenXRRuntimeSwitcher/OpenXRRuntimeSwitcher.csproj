@@ -56,5 +56,6 @@
 	</ItemGroup>
 	<Target Name="CopyYourFolderAfterPublish" AfterTargets="Publish">
 		<Exec Command="XCOPY $(ProjectDir)src\OpenXRRuntimeSwitcher\Resources\*.* $(PublishDir)RuntimeIcons\ /S /Y /EXCLUDE:iconsNotToCopy.txt" />
+		<Exec Command="XCOPY $(ProjectDir)..\..\examples $(PublishDir)examples\ /S /Y /I" />
 	</Target>	
 </Project>

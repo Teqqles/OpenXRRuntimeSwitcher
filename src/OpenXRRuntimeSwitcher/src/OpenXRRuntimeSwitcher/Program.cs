@@ -30,15 +30,21 @@ internal static class Program
         var exePath = System.Diagnostics.Process.GetCurrentProcess().MainModule!.FileName;
         var exeDir = Path.GetDirectoryName(exePath)!;
         var configPath = Path.Combine(exeDir, "config.ini");
+        var customRuntimesPath = Path.Combine(exeDir, "custom_runtimes.json");
 
         var configService = new ConfigService();
         Config config = configService.Load(configPath);
 
+        var customRuntimeService = new CustomRuntimeService(registryService);
+        var customRuntimes = customRuntimeService.LoadCustomRuntimes(customRuntimesPath);
+        customRuntimeService.RegisterCustomRuntimesInRegistry(customRuntimes);
+
         var hotkeyService = new HotkeyService();
 
         IRuntimeIconResources resources = new RuntimeIconResources();
-        IRuntimeInfoProvider runtimeInfoProvider = new RuntimeInfoProvider(new DefaultRuntimeIconFactory(new ColorModeProvider(), resources));
+        IRuntimeIconFactory iconFactory = new DefaultRuntimeIconFactory(new ColorModeProvider(), resources);
+        IRuntimeInfoProvider runtimeInfoProvider = new RuntimeInfoProvider(iconFactory);
 
-        Application.Run(new TrayApp(runtimeService, hotkeyService, config, runtimeInfoProvider));
+        Application.Run(new TrayApp(runtimeService, hotkeyService, config, runtimeInfoProvider, customRuntimeService, iconFactory, customRuntimesPath));
     }
 }

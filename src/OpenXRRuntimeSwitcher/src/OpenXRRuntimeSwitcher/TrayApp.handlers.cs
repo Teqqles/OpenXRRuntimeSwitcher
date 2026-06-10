@@ -47,17 +47,70 @@ namespace OpenXRRuntimeSwitcher
             }
         }
 
-        // Called when the runtime selection changes
         private void OnComboSelectionChanged(object? sender, EventArgs e)
         {
             try
             {
+                if (_runtimeCombo.SelectedItem?.ToString() == AddCustomRuntimeText)
+                {
+                    ShowAddCustomRuntimeDialog();
+                    return;
+                }
+
                 UpdateRuntimeVisuals();
                 UpdateApplyButtonState();
             }
             catch (Exception ex)
             {
                 TrayLogger.LogException(nameof(OnComboSelectionChanged), ex);
+            }
+        }
+
+        private void ShowAddCustomRuntimeDialog()
+        {
+            using var dialog = new Forms.AddCustomRuntimeForm();
+            if (dialog.ShowDialog(this) == DialogResult.OK && dialog.Result != null)
+            {
+                try
+                {
+                    var added = _customRuntimeService.AddCustomRuntime(_customRuntimesPath, dialog.Result);
+
+                    if (!added)
+                    {
+                        MessageBox.Show(this,
+                            $"A runtime with manifest path:\n\n{dialog.Result.ManifestPath}\n\nis already registered.\n\nIt may already be in your custom runtimes list or installed by another application (like SteamVR, Meta, etc.).",
+                            "Runtime Already Registered",
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Warning);
+                        if (_runtimeCombo.Items.Count > 1)
+                            _runtimeCombo.SelectedIndex = 0;
+                        return;
+                    }
+
+                    _customRuntimeService.RegisterCustomRuntimesInRegistry(new[] { dialog.Result });
+
+                    LoadRuntimes();
+
+                    MessageBox.Show(this,
+                        $"Custom runtime '{dialog.Result.Name}' has been added successfully.\n\nIt will now appear in the Available Runtimes dropdown.",
+                        "Success",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Information);
+                }
+                catch (Exception ex)
+                {
+                    TrayLogger.LogException(nameof(ShowAddCustomRuntimeDialog), ex);
+                    MessageBox.Show(this,
+                        $"Failed to add custom runtime: {ex.Message}",
+                        "Error",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Error);
+                }
+            }
+            else
+            {
+                if (_runtimeCombo.Items.Count > 1)
+                    _runtimeCombo.SelectedIndex = 0;
             }
         }
 

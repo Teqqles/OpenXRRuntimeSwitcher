@@ -35,10 +35,20 @@ public sealed class OpenXRRuntimeService : IOpenXRRuntimeService
             // Try to read a friendly name from the manifest JSON ("runtime"."name")
             var manifestName = TryReadRuntimeNameFromManifest(manifestPath);
 
-            // Fall back to the registry value when present, otherwise file name
-            var displayName = !string.IsNullOrWhiteSpace(manifestName)
-                ? manifestName
-                : (!string.IsNullOrWhiteSpace(kvp.Value) ? kvp.Value : Path.GetFileNameWithoutExtension(manifestPath));
+            // Fall back: use registry value unless it's numeric (like "0"), then use filename
+            string displayName;
+            if (!string.IsNullOrWhiteSpace(manifestName))
+            {
+                displayName = manifestName;
+            }
+            else if (!string.IsNullOrWhiteSpace(kvp.Value) && !int.TryParse(kvp.Value, out _))
+            {
+                displayName = kvp.Value;
+            }
+            else
+            {
+                displayName = Path.GetFileNameWithoutExtension(manifestPath);
+            }
 
             return new OpenXRRuntime(displayName ?? string.Empty, manifestPath);
         }).ToList();

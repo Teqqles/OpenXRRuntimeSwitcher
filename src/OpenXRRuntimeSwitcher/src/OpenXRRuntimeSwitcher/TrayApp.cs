@@ -10,13 +10,17 @@ namespace OpenXRRuntimeSwitcher
         private readonly IOpenXRRuntimeService _runtimeService;
         private readonly IHotkeyService _hotkeyService;
         private readonly IRuntimeInfoProvider _runtimeInfoProvider;
+        private readonly ICustomRuntimeService _customRuntimeService;
+        private readonly IRuntimeIconFactory _iconFactory;
         private readonly Config _config;
         private readonly StartupTaskService _startupTaskService = new(new TaskSchedulerService());
+        private readonly string _customRuntimesPath;
 
         private IReadOnlyList<OpenXRRuntime> _runtimes = Array.Empty<OpenXRRuntime>();
 
         private const int PollIntervalMs = 2000;
         private const string CustomRuntimeText = "Custom Runtime";
+        private const string AddCustomRuntimeText = "Add Custom Runtime...";
 
         private readonly RegistryChangeDetector _registryDetector;
 
@@ -24,12 +28,18 @@ namespace OpenXRRuntimeSwitcher
             IOpenXRRuntimeService runtimeService,
             IHotkeyService hotkeyService,
             Config config,
-            IRuntimeInfoProvider runtimeInfoProvider) : this()
+            IRuntimeInfoProvider runtimeInfoProvider,
+            ICustomRuntimeService customRuntimeService,
+            IRuntimeIconFactory iconFactory,
+            string customRuntimesPath) : this()
         {
             _runtimeService = runtimeService ?? throw new ArgumentNullException(nameof(runtimeService));
             _hotkeyService = hotkeyService ?? throw new ArgumentNullException(nameof(hotkeyService));
             _runtimeInfoProvider = runtimeInfoProvider ?? throw new ArgumentNullException(nameof(runtimeInfoProvider));
+            _customRuntimeService = customRuntimeService ?? throw new ArgumentNullException(nameof(customRuntimeService));
+            _iconFactory = iconFactory ?? throw new ArgumentNullException(nameof(iconFactory));
             _config = config ?? throw new ArgumentNullException(nameof(config));
+            _customRuntimesPath = customRuntimesPath;
 
             // Create runtime-only NotifyIcon here (removed from the designer partial).
             _trayIcon.Visible = true;
@@ -63,7 +73,6 @@ namespace OpenXRRuntimeSwitcher
             base.OnFormClosing(e);
         }
 
-        // Load available runtimes into the combo box
         private void LoadRuntimes()
         {
             try
@@ -76,7 +85,8 @@ namespace OpenXRRuntimeSwitcher
                     _runtimeCombo.Items.Add(string.IsNullOrWhiteSpace(r.Name) ? CustomRuntimeText : r.Name);
                 }
 
-                // Try to select the currently active runtime if present, otherwise pick first item.
+                _runtimeCombo.Items.Add(AddCustomRuntimeText);
+
                 var activeManifest = _runtimeService.GetActiveRuntimeManifest() ?? string.Empty;
                 var activeIndex = -1;
                 if (!string.IsNullOrEmpty(activeManifest))
@@ -93,7 +103,7 @@ namespace OpenXRRuntimeSwitcher
 
                 if (activeIndex >= 0)
                     _runtimeCombo.SelectedIndex = activeIndex;
-                else if (_runtimeCombo.Items.Count > 0)
+                else if (_runtimeCombo.Items.Count > 1)
                     _runtimeCombo.SelectedIndex = 0;
             }
             catch (Exception ex)
@@ -183,15 +193,14 @@ namespace OpenXRRuntimeSwitcher
 
                 RuntimeInfo? resolved = GetRuntimeInfo(selected);
 
-                _runtimeIcon.Image = resolved?.Icon ?? Resources.UnknownIcon;
+                _runtimeIcon.Image = resolved?.Icon ?? _iconFactory.GetUnknownIcon();
 
                 if (changed)
                 {
                     if (!noToast)
                         _trayIcon.ShowBalloonTip(2000, "OpenXR Runtime Switched", $"Active runtime: {resolved?.FriendlyName ?? selected.Name ?? CustomRuntimeText}", ToolTipIcon.Info);
-                    // Probably a better way to handle this is to store the resolved icon in the RuntimeInfoProvider and
-                    // expose it as an Icon type directly, but this works for now.
-                    _trayIcon.Icon = Icon.FromHandle(((Bitmap)(resolved?.Icon ?? Resources.UnknownIcon)).GetHicon());
+
+                    _trayIcon.Icon = Icon.FromHandle(((Bitmap)(resolved?.Icon ?? _iconFactory.GetUnknownIcon())).GetHicon());
                 }
             }
             catch (Exception ex)
