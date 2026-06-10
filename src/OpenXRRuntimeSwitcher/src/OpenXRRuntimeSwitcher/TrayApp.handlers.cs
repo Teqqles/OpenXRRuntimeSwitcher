@@ -20,6 +20,15 @@ namespace OpenXRRuntimeSwitcher
                 // Ensure Apply button is rechecked after applying
                 UpdateApplyButtonState();
             }
+            catch (InvalidOperationException ex)
+            {
+                TrayLogger.LogException(nameof(OnApplyClicked), ex);
+                MessageBox.Show(this,
+                    $"Cannot switch to this runtime:\n\n{ex.Message}\n\nThe runtime manifest may be corrupted or the runtime files may have been moved or deleted.",
+                    "Invalid Runtime",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
+            }
             catch (Exception ex)
             {
                 TrayLogger.LogException(nameof(OnApplyClicked), ex);
@@ -162,10 +171,19 @@ namespace OpenXRRuntimeSwitcher
                 TrayLogger.Log($"Hotkey triggered for action: {action}, resolved runtime: {resolved?.Name ?? "None"}");
                 if (resolved != null)
                 {
-                    _runtimeService.SetActiveRuntime(resolved.ManifestPath);
                     try
                     {
+                        _runtimeService.SetActiveRuntime(resolved.ManifestPath);
                         LoadRuntimes();
+                    }
+                    catch (InvalidOperationException ex)
+                    {
+                        TrayLogger.LogException("Hotkey validation error", ex);
+                        MessageBox.Show(this,
+                            $"Cannot switch to runtime '{resolved.Name}':\n\n{ex.Message}\n\nThe runtime manifest may be corrupted or the runtime files may have been moved or deleted.",
+                            "Invalid Runtime",
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Warning);
                     }
                     catch (Exception ex)
                     {

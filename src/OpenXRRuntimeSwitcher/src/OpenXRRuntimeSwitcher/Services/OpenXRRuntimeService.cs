@@ -62,6 +62,9 @@ public sealed class OpenXRRuntimeService : IOpenXRRuntimeService
         if (string.IsNullOrWhiteSpace(manifestPath))
             throw new ArgumentException("Manifest path cannot be null or empty.", nameof(manifestPath));
 
+        if (!OpenXRManifestReader.IsValidOpenXRManifest(manifestPath, out var error))
+            throw new InvalidOperationException($"Cannot switch to invalid runtime manifest: {error}");
+
         _registry.WriteValue(BaseKey, "ActiveRuntime", manifestPath);
     }
 

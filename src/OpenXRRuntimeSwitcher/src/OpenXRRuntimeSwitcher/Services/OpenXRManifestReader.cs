@@ -46,6 +46,20 @@ namespace OpenXRRuntimeSwitcher.Services
                     return false;
                 }
 
+                var libraryPath = libPath.GetString();
+                if (string.IsNullOrWhiteSpace(libraryPath))
+                {
+                    errorMessage = "The 'runtime.library_path' field is empty.";
+                    return false;
+                }
+
+                var resolvedLibraryPath = ResolveLibraryPath(path, libraryPath);
+                if (!File.Exists(resolvedLibraryPath))
+                {
+                    errorMessage = $"Runtime library does not exist: {resolvedLibraryPath}";
+                    return false;
+                }
+
                 return true;
             }
             catch (JsonException ex)
@@ -58,6 +72,20 @@ namespace OpenXRRuntimeSwitcher.Services
                 errorMessage = $"Error reading manifest: {ex.Message}";
                 return false;
             }
+        }
+
+        private static string ResolveLibraryPath(string manifestPath, string libraryPath)
+        {
+            var expandedPath = Environment.ExpandEnvironmentVariables(libraryPath);
+
+            if (Path.IsPathRooted(expandedPath))
+                return expandedPath;
+
+            var manifestDir = Path.GetDirectoryName(manifestPath);
+            if (string.IsNullOrEmpty(manifestDir))
+                return expandedPath;
+
+            return Path.GetFullPath(Path.Combine(manifestDir, expandedPath));
         }
 
         /// <summary>

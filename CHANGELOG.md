@@ -1,15 +1,21 @@
 # Changelog
 
-## [Unreleased] - 2026-04-27
+## [Unreleased]
 
 ### Added
 
+- Comprehensive manifest validation before switching runtimes (#13)
+  - Validates manifest format (file_format_version, runtime object, library_path)
+  - Verifies runtime DLL actually exists on disk
+  - Resolves relative and absolute library paths correctly
+  - Shows clear error messages when validation fails
 - Dark Mode.  The application now respects the user settings in Windows.
 - Exported brand icons, so Users can use them in their own workflows (e.g. Stream Deck actions)
 
 ### Changed
 
 - File structure to better conform to our own CONTRIBUTING guide.
+- Runtime switching now validates manifests before applying changes to prevent switching to broken runtimes
 
 ### Fixed
 
