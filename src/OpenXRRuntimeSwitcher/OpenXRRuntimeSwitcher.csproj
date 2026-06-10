@@ -13,6 +13,13 @@
     <RuntimeIdentifier>win-x64</RuntimeIdentifier>
     <!-- REQUIRED for WinForms/WPF single-file -->
     <IncludeAllContentForSelfExtract>true</IncludeAllContentForSelfExtract>
+    <!-- Version information -->
+    <Version>0.3.0</Version>
+    <AssemblyVersion>0.3.0.0</AssemblyVersion>
+    <FileVersion>0.3.0.0</FileVersion>
+    <Product>OpenXR Runtime Switcher</Product>
+    <Company>OpenXR Runtime Switcher Project</Company>
+    <Copyright>Copyright © 2026</Copyright>
 	</PropertyGroup>
 	<ItemGroup>
 	  <Compile Remove="tests\**" />
@@ -56,5 +63,6 @@
 	</ItemGroup>
 	<Target Name="CopyYourFolderAfterPublish" AfterTargets="Publish">
 		<Exec Command="XCOPY $(ProjectDir)src\OpenXRRuntimeSwitcher\Resources\*.* $(PublishDir)RuntimeIcons\ /S /Y /EXCLUDE:iconsNotToCopy.txt" />
+		<Exec Command="XCOPY $(ProjectDir)..\..\examples $(PublishDir)examples\ /S /Y /I" />
 	</Target>	
 </Project>

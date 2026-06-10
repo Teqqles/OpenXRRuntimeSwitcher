@@ -24,7 +24,13 @@ public sealed class DefaultRuntimeIconFactory : IRuntimeIconFactory
             "mixedreality" => dark ? _resources.WMRIconDarkMode : _resources.WMRIcon,
             "varjo" => dark ? _resources.VarjoIconDarkMode : _resources.VarjoIcon,
             "virtualdesktop" => dark ? _resources.VirtualDesktopIconDarkMode : _resources.VirtualDesktopIcon,
-            _ => dark ? _resources.UnknownIconDarkMode : _resources.UnknownIcon
+            _ => GetUnknownIcon()
         };
+    }
+
+    public Image GetUnknownIcon()
+    {
+        bool dark = _darkMode.IsDarkMode();
+        return dark ? _resources.UnknownIconDarkMode : _resources.UnknownIcon;
     }
 }

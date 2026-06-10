@@ -40,5 +40,6 @@ public sealed class RuntimeInfoProviderTests
     private sealed class FakeIconFactory : IRuntimeIconFactory
     {
         public Image GetIcon(string key) => new Bitmap(1, 1);
+        public Image GetUnknownIcon() => new Bitmap(1, 1);
     }
 }

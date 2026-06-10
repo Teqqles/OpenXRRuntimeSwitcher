@@ -1,0 +1,8 @@
+{
+  "file_format_version": "1.0.0",
+  "runtime": {
+    "name": "Example OpenXR Runtime",
+    "library_path": ".\\bin\\x64\\example_openxr.dll",
+    "api_layers": []
+  }
+}
