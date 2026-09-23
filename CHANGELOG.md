@@ -21,6 +21,7 @@
   - Shows error messages when validation fails
 - Dark Mode.  The application now respects the user settings in Windows.
 - Exported brand icons, so Users can use them in their own workflows (e.g. Stream Deck actions)
+- Added an API Layers manager: view, reorder, enable/disable (resumeable), and delete implicit OpenXR API layers; broken layer paths highlighted red.
 
 ### Changed
 
