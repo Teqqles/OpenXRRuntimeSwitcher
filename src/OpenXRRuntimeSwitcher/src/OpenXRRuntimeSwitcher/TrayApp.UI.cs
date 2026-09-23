@@ -19,6 +19,7 @@ namespace OpenXRRuntimeSwitcher
         private PictureBox _alertIcon = default!;
         private IContainer components;
         private Label _runtimeFriendlyLabel = default!;
+        private Button _manageLayersButton = default!;
 
         // Parameterless constructor required by the WinForms designer.
         // Keep this minimal so the designer's CodeDom reader can parse it.
@@ -49,6 +50,7 @@ namespace OpenXRRuntimeSwitcher
             _activeRuntimeLabel = new Label();
             _availableRuntimesLabel = new Label();
             _alertIcon = new PictureBox();
+            _manageLayersButton = new Button();
             _trayIcon = new NotifyIcon(components);
             ((ISupportInitialize)_runtimeIcon).BeginInit();
             ((ISupportInitialize)_alertIcon).BeginInit();
@@ -147,9 +149,9 @@ namespace OpenXRRuntimeSwitcher
             _availableRuntimesLabel.Size = new Size(318, 18);
             _availableRuntimesLabel.TabIndex = 8;
             _availableRuntimesLabel.Text = "Available Runtimes:";
-            // 
+            //
             // _alertIcon
-            // 
+            //
             _alertIcon.Image = SystemIcons.Warning.ToBitmap();
             _alertIcon.Location = new Point(159, 109);
             _alertIcon.Name = "_alertIcon";
@@ -157,15 +159,25 @@ namespace OpenXRRuntimeSwitcher
             _alertIcon.SizeMode = PictureBoxSizeMode.Zoom;
             _alertIcon.TabIndex = 9;
             _alertIcon.TabStop = false;
-            // 
+            //
+            // _manageLayersButton
+            //
+            _manageLayersButton.FlatStyle = FlatStyle.Flat;
+            _manageLayersButton.Location = new Point(12, 185);
+            _manageLayersButton.Name = "_manageLayersButton";
+            _manageLayersButton.Size = new Size(110, 23);
+            _manageLayersButton.TabIndex = 10;
+            _manageLayersButton.Text = "API Layers...";
+            _manageLayersButton.Click += ManageLayersButton_Click;
+            //
             // _trayIcon
             // sadly Winforms designer doesn't support safe casts :(
 #pragma warning disable CS8600 // Disable nullable warning for the unsafe cast from resources.
             _trayIcon.Icon = (Icon)resources.GetObject("_trayIcon.Icon");
-            // 
+            //
             // TrayApp
-            // 
-            ClientSize = new Size(496, 190);
+            //
+            ClientSize = new Size(496, 220);
             Controls.Add(_alertIcon);
             Controls.Add(_availableRuntimesLabel);
             Controls.Add(_activeRuntimeLabel);
@@ -177,6 +189,7 @@ namespace OpenXRRuntimeSwitcher
             Controls.Add(_disableToastCheckbox);
             Controls.Add(_runtimeIcon);
             Controls.Add(_runtimeFriendlyLabel);
+            Controls.Add(_manageLayersButton);
             FormBorderStyle = FormBorderStyle.FixedDialog;
             MaximizeBox = false;
             Name = "TrayApp";
@@ -205,6 +218,7 @@ namespace OpenXRRuntimeSwitcher
             var menu = new ContextMenuStrip();
             menu.Items.Add("Open", null, MenuOpen_Click);
             menu.Items.Add("Refresh", null, MenuRefresh_Click);
+            menu.Items.Add("Manage API Layers...", null, MenuManageApiLayers_Click);
             menu.Items.Add("Exit", null, MenuExit_Click);
             return menu;
         }
@@ -245,7 +259,10 @@ namespace OpenXRRuntimeSwitcher
 
         private void MenuOpen_Click(object? sender, System.EventArgs e) => ShowWindow();
         private void MenuRefresh_Click(object? sender, System.EventArgs e) => ManualRefresh();
+        private void MenuManageApiLayers_Click(object? sender, System.EventArgs e) => ShowManageApiLayersDialog();
         private void MenuExit_Click(object? sender, System.EventArgs e) => Application.Exit();
+
+        private void ManageLayersButton_Click(object? sender, System.EventArgs e) => ShowManageApiLayersDialog();
 
         private void ShowWindow()
         {

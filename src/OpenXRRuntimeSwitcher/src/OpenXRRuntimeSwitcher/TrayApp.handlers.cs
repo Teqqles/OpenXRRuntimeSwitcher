@@ -75,6 +75,19 @@ namespace OpenXRRuntimeSwitcher
             }
         }
 
+        private void ShowManageApiLayersDialog()
+        {
+            try
+            {
+                using var dialog = new Forms.ManageApiLayersForm(_apiLayerService, _elevationProvider);
+                dialog.ShowDialog(this);
+            }
+            catch (Exception ex)
+            {
+                TrayLogger.LogException(nameof(ShowManageApiLayersDialog), ex);
+            }
+        }
+
         private void ShowAddCustomRuntimeDialog()
         {
             using var dialog = new Forms.AddCustomRuntimeForm();

@@ -26,6 +26,8 @@ internal static class Program
         IRegistryService registryService = new WindowsRegistryService();
 
         var runtimeService = new OpenXRRuntimeService(registryService);
+        var apiLayerService = new ApiLayerService(registryService);
+        IElevationProvider elevationProvider = new ElevationProvider();
 
         var exePath = System.Diagnostics.Process.GetCurrentProcess().MainModule!.FileName;
         var exeDir = Path.GetDirectoryName(exePath)!;
@@ -45,6 +47,6 @@ internal static class Program
         IRuntimeIconFactory iconFactory = new DefaultRuntimeIconFactory(new ColorModeProvider(), resources);
         IRuntimeInfoProvider runtimeInfoProvider = new RuntimeInfoProvider(iconFactory);
 
-        Application.Run(new TrayApp(runtimeService, hotkeyService, configService, config, runtimeInfoProvider, customRuntimeService, iconFactory, customRuntimesPath));
+        Application.Run(new TrayApp(runtimeService, hotkeyService, configService, config, runtimeInfoProvider, customRuntimeService, iconFactory, customRuntimesPath, apiLayerService, elevationProvider));
     }
 }
