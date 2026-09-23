@@ -122,6 +122,7 @@ public sealed class ManageApiLayersForm : Form
     {
         var layer = Selected;
         if (layer is null || !CanMove(layer, delta)) return;
+        if (!ApiLayerService.CanEdit(layer, _isElevated)) return;
 
         // Build the new order for this scope from the current on-screen order, then swap.
         var scopePaths = _list.Items.Cast<ListViewItem>()
@@ -151,6 +152,7 @@ public sealed class ManageApiLayersForm : Form
     {
         var layer = Selected;
         if (layer is null) return;
+        if (!ApiLayerService.CanEdit(layer, _isElevated)) return;
         try
         {
             _layers.SetEnabled(layer, !layer.Enabled);
@@ -167,6 +169,7 @@ public sealed class ManageApiLayersForm : Form
     {
         var layer = Selected;
         if (layer is null) return;
+        if (!ApiLayerService.CanEdit(layer, _isElevated)) return;
 
         var confirm = MessageBox.Show(this,
             $"Remove this OpenXR API layer registration?\n\n{layer.ManifestPath}\n\n" +
