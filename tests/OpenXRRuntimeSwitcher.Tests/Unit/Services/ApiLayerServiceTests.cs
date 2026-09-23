@@ -116,4 +116,22 @@ public sealed class ApiLayerServiceTests
         Assert.Single(remaining);
         Assert.Equal(@"C:\b.json", remaining[0].Name);
     }
+
+    [Fact]
+    public void Reorder_RewritesValuesInGivenOrder_PreservingEnabledState()
+    {
+        var fake = new FakeRegistryService();
+        fake.WriteDword(RegistryHive.CurrentUser, Key, @"C:\a.json", 0); // enabled
+        fake.WriteDword(RegistryHive.CurrentUser, Key, @"C:\b.json", 1); // disabled
+        fake.WriteDword(RegistryHive.CurrentUser, Key, @"C:\c.json", 0);
+        var svc = new ApiLayerService(fake);
+
+        svc.Reorder(LayerScope.User, new[] { @"C:\c.json", @"C:\a.json", @"C:\b.json" });
+
+        var values = fake.ReadDwordValues(RegistryHive.CurrentUser, Key);
+        Assert.Equal(new[] { @"C:\c.json", @"C:\a.json", @"C:\b.json" }, values.Select(v => v.Name).ToArray());
+        Assert.Equal(0, values[0].Data); // c still enabled
+        Assert.Equal(0, values[1].Data); // a still enabled
+        Assert.Equal(1, values[2].Data); // b still disabled
+    }
 }
