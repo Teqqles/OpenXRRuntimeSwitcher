@@ -26,6 +26,12 @@ The UI follows the system’s colour mode using:
 Application.SetColorMode(SystemColorMode.System);
 ```
 
+### ✔ Manage OpenXR API layers (NEW)
+View registered implicit OpenXR API layers (user and system scope), reorder load order,
+enable/disable layers as a resumeable play/pause, and delete unwanted entries. Layers whose
+manifest path no longer exists are highlighted in red. System-scope edits require running
+the app as administrator.
+
 ## 🖼 UI Overview
 
 ![selecting new runtime with preview](https://github.com/Teqqles/OpenXRRuntimeSwitcher/raw/main/docs/images/selecting_runtime.png)
