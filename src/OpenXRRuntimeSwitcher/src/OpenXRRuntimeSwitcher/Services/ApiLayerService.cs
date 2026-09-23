@@ -77,6 +77,11 @@ public sealed class ApiLayerService : IApiLayerService
         _registry.WriteDword(HiveFor(layer.Scope), ImplicitKey, layer.ManifestPath, enabled ? 0 : 1);
     }
 
-    public void Delete(ApiLayer layer) => throw new NotImplementedException();
+    public void Delete(ApiLayer layer)
+    {
+        ArgumentNullException.ThrowIfNull(layer);
+        _registry.DeleteValue(HiveFor(layer.Scope), ImplicitKey, layer.ManifestPath);
+    }
+
     public void Reorder(LayerScope scope, IReadOnlyList<string> orderedManifestPaths) => throw new NotImplementedException();
 }

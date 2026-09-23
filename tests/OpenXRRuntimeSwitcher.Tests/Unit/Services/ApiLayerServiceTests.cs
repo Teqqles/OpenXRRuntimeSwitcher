@@ -100,4 +100,20 @@ public sealed class ApiLayerServiceTests
         Assert.Equal(0, fake.ReadDwordValues(RegistryHive.LocalMachine, Key).Single().Data);
         Assert.Empty(fake.ReadDwordValues(RegistryHive.CurrentUser, Key)); // hive not touched
     }
+
+    [Fact]
+    public void Delete_RemovesValueFromItsHive()
+    {
+        var fake = new FakeRegistryService();
+        fake.WriteDword(RegistryHive.CurrentUser, Key, @"C:\a.json", 0);
+        fake.WriteDword(RegistryHive.CurrentUser, Key, @"C:\b.json", 0);
+        var svc = new ApiLayerService(fake);
+        var a = svc.GetLayers().Single(l => l.ManifestPath == @"C:\a.json");
+
+        svc.Delete(a);
+
+        var remaining = fake.ReadDwordValues(RegistryHive.CurrentUser, Key);
+        Assert.Single(remaining);
+        Assert.Equal(@"C:\b.json", remaining[0].Name);
+    }
 }
