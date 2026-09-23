@@ -107,4 +107,10 @@ public sealed class ApiLayerService : IApiLayerService
         foreach (var path in final)
             _registry.WriteDword(hive, ImplicitKey, path, dataByPath[path]);
     }
+
+    public static bool CanEdit(ApiLayer layer, bool isElevated)
+    {
+        ArgumentNullException.ThrowIfNull(layer);
+        return layer.Scope == LayerScope.User || isElevated;
+    }
 }
