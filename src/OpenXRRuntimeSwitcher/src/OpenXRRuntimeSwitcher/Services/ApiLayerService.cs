@@ -83,5 +83,28 @@ public sealed class ApiLayerService : IApiLayerService
         _registry.DeleteValue(HiveFor(layer.Scope), ImplicitKey, layer.ManifestPath);
     }
 
-    public void Reorder(LayerScope scope, IReadOnlyList<string> orderedManifestPaths) => throw new NotImplementedException();
+    public void Reorder(LayerScope scope, IReadOnlyList<string> orderedManifestPaths)
+    {
+        ArgumentNullException.ThrowIfNull(orderedManifestPaths);
+        var hive = HiveFor(scope);
+
+        // Snapshot current data so we can preserve each layer's enabled/disabled state.
+        var current = _registry.ReadDwordValues(hive, ImplicitKey);
+        var dataByPath = current.ToDictionary(v => v.Name, v => v.Data);
+
+        // Final sequence: requested order first (only those that exist), then any leftovers.
+        var final = new List<string>();
+        foreach (var path in orderedManifestPaths)
+            if (dataByPath.ContainsKey(path) && !final.Contains(path))
+                final.Add(path);
+        foreach (var v in current)
+            if (!final.Contains(v.Name))
+                final.Add(v.Name);
+
+        // Delete all, then re-add in order (loader honors registry enumeration order).
+        foreach (var v in current)
+            _registry.DeleteValue(hive, ImplicitKey, v.Name);
+        foreach (var path in final)
+            _registry.WriteDword(hive, ImplicitKey, path, dataByPath[path]);
+    }
 }
