@@ -103,8 +103,8 @@ public sealed class ManageApiLayersForm : Form
         var canEdit = layer is not null && ApiLayerService.CanEdit(layer, _isElevated);
         _toggleButton.Enabled = canEdit;
         _deleteButton.Enabled = canEdit;
-        _upButton.Enabled = canEdit && CanMove(layer!, -1);
-        _downButton.Enabled = canEdit && CanMove(layer!, 1);
+        _upButton.Enabled = layer is not null && canEdit && CanMove(layer, -1);
+        _downButton.Enabled = layer is not null && canEdit && CanMove(layer, 1);
         _toggleButton.Text = layer is { Enabled: true } ? "Disable" : "Enable";
     }
 
