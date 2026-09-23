@@ -71,4 +71,33 @@ public sealed class ApiLayerServiceTests
             if (Directory.Exists(dir)) Directory.Delete(dir, recursive: true);
         }
     }
+
+    [Fact]
+    public void SetEnabled_False_WritesDisabledDword_WithoutDeleting()
+    {
+        var fake = new FakeRegistryService();
+        fake.WriteDword(RegistryHive.CurrentUser, Key, @"C:\a.json", 0);
+        var svc = new ApiLayerService(fake);
+        var layer = svc.GetLayers().Single();
+
+        svc.SetEnabled(layer, false);
+
+        var stored = fake.ReadDwordValues(RegistryHive.CurrentUser, Key).Single();
+        Assert.Equal(@"C:\a.json", stored.Name);   // still present -> resumeable
+        Assert.Equal(1, stored.Data);              // disabled
+    }
+
+    [Fact]
+    public void SetEnabled_True_WritesEnabledDword_InCorrectHive()
+    {
+        var fake = new FakeRegistryService();
+        fake.WriteDword(RegistryHive.LocalMachine, Key, @"C:\sys.json", 1);
+        var svc = new ApiLayerService(fake);
+        var layer = svc.GetLayers().Single(l => l.Scope == LayerScope.System);
+
+        svc.SetEnabled(layer, true);
+
+        Assert.Equal(0, fake.ReadDwordValues(RegistryHive.LocalMachine, Key).Single().Data);
+        Assert.Empty(fake.ReadDwordValues(RegistryHive.CurrentUser, Key)); // hive not touched
+    }
 }
