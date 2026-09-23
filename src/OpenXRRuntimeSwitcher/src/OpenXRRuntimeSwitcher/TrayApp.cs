@@ -17,6 +17,8 @@ namespace OpenXRRuntimeSwitcher
         private readonly StartupTaskService _startupTaskService = new(new TaskSchedulerService());
         private readonly string _customRuntimesPath;
         private bool _savedDisableToastState;
+        private readonly IApiLayerService _apiLayerService;
+        private readonly IElevationProvider _elevationProvider;
 
         private IReadOnlyList<OpenXRRuntime> _runtimes = Array.Empty<OpenXRRuntime>();
 
@@ -34,7 +36,9 @@ namespace OpenXRRuntimeSwitcher
             IRuntimeInfoProvider runtimeInfoProvider,
             ICustomRuntimeService customRuntimeService,
             IRuntimeIconFactory iconFactory,
-            string customRuntimesPath) : this()
+            string customRuntimesPath,
+            IApiLayerService apiLayerService,
+            IElevationProvider elevationProvider) : this()
         {
             _runtimeService = runtimeService ?? throw new ArgumentNullException(nameof(runtimeService));
             _hotkeyService = hotkeyService ?? throw new ArgumentNullException(nameof(hotkeyService));
@@ -44,6 +48,8 @@ namespace OpenXRRuntimeSwitcher
             _iconFactory = iconFactory ?? throw new ArgumentNullException(nameof(iconFactory));
             _config = config ?? throw new ArgumentNullException(nameof(config));
             _customRuntimesPath = customRuntimesPath;
+            _apiLayerService = apiLayerService ?? throw new ArgumentNullException(nameof(apiLayerService));
+            _elevationProvider = elevationProvider ?? throw new ArgumentNullException(nameof(elevationProvider));
 
             // Create runtime-only NotifyIcon here (removed from the designer partial).
             _trayIcon.Visible = true;
