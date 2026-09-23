@@ -89,7 +89,7 @@ public sealed class ApiLayerService : IApiLayerService
         var hive = HiveFor(scope);
 
         // Snapshot current data so we can preserve each layer's enabled/disabled state.
-        var current = _registry.ReadDwordValues(hive, ImplicitKey);
+        var current = _registry.ReadDwordValues(hive, ImplicitKey).ToList();
         var dataByPath = current.ToDictionary(v => v.Name, v => v.Data);
 
         // Final sequence: requested order first (only those that exist), then any leftovers.

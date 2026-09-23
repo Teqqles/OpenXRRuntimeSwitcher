@@ -6,8 +6,8 @@ namespace OpenXRRuntimeSwitcher.Tests.Fakes;
 public sealed class FakeRegistryService : IRegistryService
 {
     private readonly Dictionary<string, Dictionary<string, string>> _store = new();
-    // Insertion-ordered per (hive|key): Dictionary<string,int> preserves insertion order in .NET.
-    private readonly Dictionary<string, Dictionary<string, int>> _dwordStore = new();
+    // Insertion-ordered per (hive|key): List preserves insertion order across delete+re-add.
+    private readonly Dictionary<string, List<(string Name, int Data)>> _dwordStore = new();
 
     private static string DwordKey(RegistryHive hive, string keyPath) => $"{hive}|{keyPath}";
 
@@ -35,24 +35,32 @@ public sealed class FakeRegistryService : IRegistryService
 
     public IReadOnlyList<(string Name, int Data)> ReadDwordValues(RegistryHive hive, string keyPath)
     {
-        var list = new List<(string, int)>();
         if (_dwordStore.TryGetValue(DwordKey(hive, keyPath), out var values))
-            foreach (var kvp in values)
-                list.Add((kvp.Key, kvp.Value));
-        return list;
+            return values;
+        return new List<(string, int)>();
     }
 
     public void WriteDword(RegistryHive hive, string keyPath, string valueName, int data)
     {
         var k = DwordKey(hive, keyPath);
         if (!_dwordStore.ContainsKey(k))
-            _dwordStore[k] = new Dictionary<string, int>();
-        _dwordStore[k][valueName] = data;
+            _dwordStore[k] = new List<(string, int)>();
+
+        var list = _dwordStore[k];
+        var index = list.FindIndex(e => e.Name == valueName);
+        if (index >= 0)
+            list[index] = (valueName, data);  // Update in place, preserve position
+        else
+            list.Add((valueName, data));      // Append to end if new
     }
 
     public void DeleteValue(RegistryHive hive, string keyPath, string valueName)
     {
-        if (_dwordStore.TryGetValue(DwordKey(hive, keyPath), out var values))
-            values.Remove(valueName);
+        if (_dwordStore.TryGetValue(DwordKey(hive, keyPath), out var list))
+        {
+            var index = list.FindIndex(e => e.Name == valueName);
+            if (index >= 0)
+                list.RemoveAt(index);  // Remove by index, preserves order of remaining entries
+        }
     }
 }
