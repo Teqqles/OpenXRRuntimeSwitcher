@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Text.Json;
 using OpenXRRuntimeSwitcher.Models;
 using OpenXRRuntimeSwitcher.Services.Abstractions;
@@ -67,7 +68,15 @@ public sealed class ApiLayerService : IApiLayerService
         return fallback;
     }
 
-    public void SetEnabled(ApiLayer layer, bool enabled) => throw new NotImplementedException();
+    private static RegistryHive HiveFor(LayerScope scope) =>
+        scope == LayerScope.User ? RegistryHive.CurrentUser : RegistryHive.LocalMachine;
+
+    public void SetEnabled(ApiLayer layer, bool enabled)
+    {
+        ArgumentNullException.ThrowIfNull(layer);
+        _registry.WriteDword(HiveFor(layer.Scope), ImplicitKey, layer.ManifestPath, enabled ? 0 : 1);
+    }
+
     public void Delete(ApiLayer layer) => throw new NotImplementedException();
     public void Reorder(LayerScope scope, IReadOnlyList<string> orderedManifestPaths) => throw new NotImplementedException();
 }
