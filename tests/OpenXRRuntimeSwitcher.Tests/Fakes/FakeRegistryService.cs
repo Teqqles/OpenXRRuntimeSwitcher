@@ -9,6 +9,9 @@ public sealed class FakeRegistryService : IRegistryService
     // Insertion-ordered per (hive|key): List preserves insertion order across delete+re-add.
     private readonly Dictionary<string, List<(string Name, int Data)>> _dwordStore = new();
 
+    // Optional failure injection for testing error-recovery paths.
+    public Func<string, bool>? ThrowOnWriteDword { get; set; }
+
     private static string DwordKey(RegistryHive hive, string keyPath) => $"{hive}|{keyPath}";
 
     public string? ReadValue(string keyPath, string valueName)
@@ -36,12 +39,15 @@ public sealed class FakeRegistryService : IRegistryService
     public IReadOnlyList<(string Name, int Data)> ReadDwordValues(RegistryHive hive, string keyPath)
     {
         if (_dwordStore.TryGetValue(DwordKey(hive, keyPath), out var values))
-            return values;
+            return new List<(string, int)>(values);
         return new List<(string, int)>();
     }
 
     public void WriteDword(RegistryHive hive, string keyPath, string valueName, int data)
     {
+        if (ThrowOnWriteDword?.Invoke(valueName) == true)
+            throw new InvalidOperationException($"Injected failure: WriteDword({valueName})");
+
         var k = DwordKey(hive, keyPath);
         if (!_dwordStore.ContainsKey(k))
             _dwordStore[k] = new List<(string, int)>();

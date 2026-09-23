@@ -102,10 +102,24 @@ public sealed class ApiLayerService : IApiLayerService
                 final.Add(v.Name);
 
         // Delete all, then re-add in order (loader honors registry enumeration order).
-        foreach (var v in current)
-            _registry.DeleteValue(hive, ImplicitKey, v.Name);
-        foreach (var path in final)
-            _registry.WriteDword(hive, ImplicitKey, path, dataByPath[path]);
+        // Non-atomic: if a write fails after the deletes, restore the original snapshot
+        // so a partial failure never drops the user's layer registrations.
+        try
+        {
+            foreach (var v in current)
+                _registry.DeleteValue(hive, ImplicitKey, v.Name);
+            foreach (var path in final)
+                _registry.WriteDword(hive, ImplicitKey, path, dataByPath[path]);
+        }
+        catch
+        {
+            // Best-effort rollback to the pre-Reorder state before rethrowing.
+            foreach (var leftover in _registry.ReadDwordValues(hive, ImplicitKey).ToList())
+                _registry.DeleteValue(hive, ImplicitKey, leftover.Name);
+            foreach (var v in current)
+                _registry.WriteDword(hive, ImplicitKey, v.Name, v.Data);
+            throw;
+        }
     }
 
     public static bool CanEdit(ApiLayer layer, bool isElevated)

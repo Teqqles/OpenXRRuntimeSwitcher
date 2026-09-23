@@ -145,4 +145,43 @@ public sealed class ApiLayerServiceTests
         var layer = new ApiLayer(scope, @"C:\a.json", "a", true, true, 0);
         Assert.Equal(expected, ApiLayerService.CanEdit(layer, elevated));
     }
+
+    [Fact]
+    public void Reorder_WriteDwordFails_RollsBackAndRethrows()
+    {
+        var fake = new FakeRegistryService();
+        fake.WriteDword(RegistryHive.CurrentUser, Key, @"C:\a.json", 0);
+        fake.WriteDword(RegistryHive.CurrentUser, Key, @"C:\b.json", 1);
+        fake.WriteDword(RegistryHive.CurrentUser, Key, @"C:\c.json", 0);
+        var svc = new ApiLayerService(fake);
+
+        // Snapshot the original state before Reorder.
+        var originalValues = fake.ReadDwordValues(RegistryHive.CurrentUser, Key).ToList();
+
+        // Make WriteDword fail once when writing the second value in the new order.
+        // Allow subsequent writes (including rollback) to succeed.
+        var throwOnce = false;
+        fake.ThrowOnWriteDword = name =>
+        {
+            if (name == @"C:\b.json" && !throwOnce)
+            {
+                throwOnce = true;
+                return true;
+            }
+            return false;
+        };
+
+        // Reorder should throw and roll back to the original state.
+        Assert.Throws<InvalidOperationException>(() =>
+            svc.Reorder(LayerScope.User, new[] { @"C:\c.json", @"C:\b.json", @"C:\a.json" }));
+
+        // Verify the hive was restored exactly to the pre-Reorder state.
+        var afterFailure = fake.ReadDwordValues(RegistryHive.CurrentUser, Key).ToList();
+        Assert.Equal(originalValues.Count, afterFailure.Count);
+        for (var i = 0; i < originalValues.Count; i++)
+        {
+            Assert.Equal(originalValues[i].Name, afterFailure[i].Name);
+            Assert.Equal(originalValues[i].Data, afterFailure[i].Data);
+        }
+    }
 }
