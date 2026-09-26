@@ -1,5 +1,4 @@
 using System.Linq;
-using System.Text.Json;
 using OpenXRRuntimeSwitcher.Models;
 using OpenXRRuntimeSwitcher.Services.Abstractions;
 
@@ -30,42 +29,14 @@ public sealed class ApiLayerService : IApiLayerService
         for (var i = 0; i < values.Count; i++)
         {
             var (path, data) = values[i];
-            var exists = SafeFileExists(path);
             yield return new ApiLayer(
                 Scope: scope,
                 ManifestPath: path,
-                Name: ResolveName(path, exists),
+                Name: OpenXRManifestReader.TryReadApiLayerName(path) ?? Path.GetFileNameWithoutExtension(path),
                 Enabled: data == 0,
-                PathExists: exists,
+                PathExists: OpenXRManifestReader.ManifestExists(path),
                 Order: i);
         }
-    }
-
-    private static bool SafeFileExists(string path)
-    {
-        try { return !string.IsNullOrWhiteSpace(path) && File.Exists(path); }
-        catch { return false; }
-    }
-
-    private static string ResolveName(string manifestPath, bool exists)
-    {
-        var fallback = Path.GetFileNameWithoutExtension(manifestPath);
-        if (!exists) return fallback;
-        try
-        {
-            using var stream = File.OpenRead(manifestPath);
-            using var doc = JsonDocument.Parse(stream);
-            if (doc.RootElement.TryGetProperty("api_layer", out var layer)
-                && layer.ValueKind == JsonValueKind.Object
-                && layer.TryGetProperty("name", out var name)
-                && name.ValueKind == JsonValueKind.String)
-            {
-                var n = name.GetString();
-                return string.IsNullOrWhiteSpace(n) ? fallback : n;
-            }
-        }
-        catch { /* malformed manifest: fall back to filename */ }
-        return fallback;
     }
 
     private static RegistryHive HiveFor(LayerScope scope) =>
