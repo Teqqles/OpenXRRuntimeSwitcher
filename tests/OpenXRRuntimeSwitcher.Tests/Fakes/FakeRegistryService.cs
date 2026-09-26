@@ -11,6 +11,7 @@ public sealed class FakeRegistryService : IRegistryService
 
     // Optional failure injection for testing error-recovery paths.
     public Func<string, bool>? ThrowOnWriteDword { get; set; }
+    private int _injectedFailures;
 
     private static string DwordKey(RegistryHive hive, string keyPath) => $"{hive}|{keyPath}";
 
@@ -46,7 +47,7 @@ public sealed class FakeRegistryService : IRegistryService
     public void WriteDword(RegistryHive hive, string keyPath, string valueName, int data)
     {
         if (ThrowOnWriteDword?.Invoke(valueName) == true)
-            throw new InvalidOperationException($"Injected failure: WriteDword({valueName})");
+            throw new InvalidOperationException($"Injected failure #{++_injectedFailures}: WriteDword({valueName})");
 
         var k = DwordKey(hive, keyPath);
         if (!_dwordStore.ContainsKey(k))

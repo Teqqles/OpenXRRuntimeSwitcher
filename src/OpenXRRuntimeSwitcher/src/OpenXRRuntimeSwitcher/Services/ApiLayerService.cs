@@ -74,11 +74,18 @@ public sealed class ApiLayerService : IApiLayerService
         }
         catch
         {
-            // Best-effort rollback to the pre-Reorder state before rethrowing.
-            foreach (var leftover in _registry.ReadDwordValues(hive, ImplicitKey).ToList())
-                _registry.DeleteValue(hive, ImplicitKey, leftover.Name);
-            foreach (var v in current)
-                _registry.WriteDword(hive, ImplicitKey, v.Name, v.Data);
+            // Best-effort rollback; a rollback failure must not mask the original error.
+            try
+            {
+                foreach (var leftover in _registry.ReadDwordValues(hive, ImplicitKey).ToList())
+                    _registry.DeleteValue(hive, ImplicitKey, leftover.Name);
+                foreach (var v in current)
+                    _registry.WriteDword(hive, ImplicitKey, v.Name, v.Data);
+            }
+            catch (Exception rollbackEx)
+            {
+                TrayLogger.LogException($"{nameof(Reorder)} rollback", rollbackEx);
+            }
             throw;
         }
     }
