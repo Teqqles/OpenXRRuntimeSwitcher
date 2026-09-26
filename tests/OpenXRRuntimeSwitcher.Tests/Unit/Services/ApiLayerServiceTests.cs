@@ -19,7 +19,7 @@ public sealed class ApiLayerServiceTests
     }
 
     [Fact]
-    public void GetLayers_ReadsBothHives_WithScopeAndOrder()
+    public void GetLayers_ReadsBothHives_UserScopeFirst()
     {
         var fake = new FakeRegistryService();
         fake.WriteDword(RegistryHive.CurrentUser, Key, @"C:\user1.json", 0);
@@ -27,11 +27,11 @@ public sealed class ApiLayerServiceTests
 
         var layers = new ApiLayerService(fake).GetLayers();
 
-        var user = layers.Single(l => l.Scope == LayerScope.User);
-        var sys = layers.Single(l => l.Scope == LayerScope.System);
+        Assert.Equal(new[] { LayerScope.User, LayerScope.System }, layers.Select(l => l.Scope));
+        var user = layers[0];
+        var sys = layers[1];
         Assert.Equal(@"C:\user1.json", user.ManifestPath);
         Assert.True(user.Enabled);
-        Assert.Equal(0, user.Order);
         Assert.False(sys.Enabled);      // data 1 = disabled
     }
 
@@ -142,7 +142,7 @@ public sealed class ApiLayerServiceTests
     [InlineData(LayerScope.System, true, true)]
     public void IsEditable_GatesSystemLayersOnElevation(LayerScope scope, bool elevated, bool expected)
     {
-        var layer = new ApiLayer(scope, @"C:\a.json", "a", true, true, 0);
+        var layer = new ApiLayer(scope, @"C:\a.json", "a", true, true);
         Assert.Equal(expected, layer.IsEditable(elevated));
     }
 
