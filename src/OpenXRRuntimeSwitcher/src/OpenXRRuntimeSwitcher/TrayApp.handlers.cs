@@ -85,6 +85,7 @@ namespace OpenXRRuntimeSwitcher
             catch (Exception ex)
             {
                 TrayLogger.LogException(nameof(ShowManageApiLayersDialog), ex);
+                MessageBox.Show(this, $"Failed to open API layers: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
