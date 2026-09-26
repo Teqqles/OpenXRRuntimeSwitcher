@@ -92,10 +92,4 @@ public sealed class ApiLayerService : IApiLayerService
             throw;
         }
     }
-
-    public static bool CanEdit(ApiLayer layer, bool isElevated)
-    {
-        ArgumentNullException.ThrowIfNull(layer);
-        return layer.Scope == LayerScope.User || isElevated;
-    }
 }

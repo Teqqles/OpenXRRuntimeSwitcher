@@ -140,10 +140,10 @@ public sealed class ApiLayerServiceTests
     [InlineData(LayerScope.User, true, true)]
     [InlineData(LayerScope.System, false, false)] // system needs elevation
     [InlineData(LayerScope.System, true, true)]
-    public void CanEdit_GatesSystemLayersOnElevation(LayerScope scope, bool elevated, bool expected)
+    public void IsEditable_GatesSystemLayersOnElevation(LayerScope scope, bool elevated, bool expected)
     {
         var layer = new ApiLayer(scope, @"C:\a.json", "a", true, true, 0);
-        Assert.Equal(expected, ApiLayerService.CanEdit(layer, elevated));
+        Assert.Equal(expected, layer.IsEditable(elevated));
     }
 
     [Fact]

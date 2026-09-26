@@ -100,7 +100,7 @@ public sealed class ManageApiLayersForm : Form
     private void UpdateButtonStates()
     {
         var layer = Selected;
-        var canEdit = layer is not null && ApiLayerService.CanEdit(layer, _isElevated);
+        var canEdit = layer is not null && layer.IsEditable(_isElevated);
         _toggleButton.Enabled = canEdit;
         _deleteButton.Enabled = canEdit;
         _upButton.Enabled = layer is not null && canEdit && CanMove(layer, -1);
@@ -122,7 +122,7 @@ public sealed class ManageApiLayersForm : Form
     {
         var layer = Selected;
         if (layer is null || !CanMove(layer, delta)) return;
-        if (!ApiLayerService.CanEdit(layer, _isElevated)) return;
+        if (!layer.IsEditable(_isElevated)) return;
 
         // Build the new order for this scope from the current on-screen order, then swap.
         var scopePaths = _list.Items.Cast<ListViewItem>()
@@ -152,7 +152,7 @@ public sealed class ManageApiLayersForm : Form
     {
         var layer = Selected;
         if (layer is null) return;
-        if (!ApiLayerService.CanEdit(layer, _isElevated)) return;
+        if (!layer.IsEditable(_isElevated)) return;
         try
         {
             _layers.SetEnabled(layer, !layer.Enabled);
@@ -169,7 +169,7 @@ public sealed class ManageApiLayersForm : Form
     {
         var layer = Selected;
         if (layer is null) return;
-        if (!ApiLayerService.CanEdit(layer, _isElevated)) return;
+        if (!layer.IsEditable(_isElevated)) return;
 
         var confirm = MessageBox.Show(this,
             $"Remove this OpenXR API layer registration?\n\n{layer.ManifestPath}\n\n" +
