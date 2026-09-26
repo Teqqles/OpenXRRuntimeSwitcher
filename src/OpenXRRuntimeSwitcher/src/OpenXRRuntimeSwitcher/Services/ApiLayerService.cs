@@ -23,21 +23,13 @@ public sealed class ApiLayerService : IApiLayerService
         return layers;
     }
 
-    private IEnumerable<ApiLayer> ReadHive(RegistryHive hive, LayerScope scope)
-    {
-        var values = _registry.ReadDwordValues(hive, ImplicitKey);
-        for (var i = 0; i < values.Count; i++)
-        {
-            var (path, data) = values[i];
-            yield return new ApiLayer(
-                Scope: scope,
-                ManifestPath: path,
-                Name: OpenXRManifestReader.TryReadApiLayerName(path) ?? Path.GetFileNameWithoutExtension(path),
-                Enabled: data == 0,
-                PathExists: OpenXRManifestReader.ManifestExists(path),
-                Order: i);
-        }
-    }
+    private IEnumerable<ApiLayer> ReadHive(RegistryHive hive, LayerScope scope) =>
+        _registry.ReadDwordValues(hive, ImplicitKey).Select(v => new ApiLayer(
+            Scope: scope,
+            ManifestPath: v.Name,
+            Name: OpenXRManifestReader.TryReadApiLayerName(v.Name) ?? Path.GetFileNameWithoutExtension(v.Name),
+            Enabled: v.Data == 0,
+            PathExists: OpenXRManifestReader.ManifestExists(v.Name)));
 
     private static RegistryHive HiveFor(LayerScope scope) =>
         scope == LayerScope.User ? RegistryHive.CurrentUser : RegistryHive.LocalMachine;
