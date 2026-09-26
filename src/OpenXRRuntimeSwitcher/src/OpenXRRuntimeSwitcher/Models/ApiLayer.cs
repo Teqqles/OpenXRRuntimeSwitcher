@@ -12,4 +12,7 @@ public sealed record ApiLayer(
     string Name,
     bool Enabled,
     bool PathExists,
-    int Order);
+    int Order)
+{
+    public bool IsEditable(bool isElevated) => Scope == LayerScope.User || isElevated;
+}
