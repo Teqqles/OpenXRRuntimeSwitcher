@@ -95,23 +95,23 @@ namespace OpenXRRuntimeSwitcher
             _warningLabel.Text = "Don't change this if you are already running a VR session!";
             // 
             // _startupCheckbox
-            //
+            // 
             _startupCheckbox.Location = new Point(12, 155);
             _startupCheckbox.Name = "_startupCheckbox";
             _startupCheckbox.Size = new Size(154, 24);
             _startupCheckbox.TabIndex = 4;
             _startupCheckbox.Text = "Start with Windows";
             _startupCheckbox.CheckedChanged += StartupCheckbox_CheckedChanged;
-            //
+            // 
             // _disableToastCheckbox
-            //
+            // 
             _disableToastCheckbox.Location = new Point(172, 155);
             _disableToastCheckbox.Name = "_disableToastCheckbox";
             _disableToastCheckbox.Size = new Size(139, 24);
             _disableToastCheckbox.TabIndex = 5;
             _disableToastCheckbox.Text = "Disable toast notifications";
             _disableToastCheckbox.CheckedChanged += DisableToastCheckbox_CheckedChanged;
-            //
+            // 
             // _runtimeIcon
             // 
             _runtimeIcon.Location = new Point(12, 12);
@@ -149,9 +149,9 @@ namespace OpenXRRuntimeSwitcher
             _availableRuntimesLabel.Size = new Size(318, 18);
             _availableRuntimesLabel.TabIndex = 8;
             _availableRuntimesLabel.Text = "Available Runtimes:";
-            //
+            // 
             // _alertIcon
-            //
+            // 
             _alertIcon.Image = SystemIcons.Warning.ToBitmap();
             _alertIcon.Location = new Point(159, 109);
             _alertIcon.Name = "_alertIcon";
@@ -159,9 +159,9 @@ namespace OpenXRRuntimeSwitcher
             _alertIcon.SizeMode = PictureBoxSizeMode.Zoom;
             _alertIcon.TabIndex = 9;
             _alertIcon.TabStop = false;
-            //
+            // 
             // _manageLayersButton
-            //
+            // 
             _manageLayersButton.FlatStyle = FlatStyle.Flat;
             _manageLayersButton.Location = new Point(12, 185);
             _manageLayersButton.Name = "_manageLayersButton";
@@ -169,14 +169,14 @@ namespace OpenXRRuntimeSwitcher
             _manageLayersButton.TabIndex = 10;
             _manageLayersButton.Text = "API Layers...";
             _manageLayersButton.Click += ManageApiLayers_Click;
-            //
+            // 
             // _trayIcon
             // sadly Winforms designer doesn't support safe casts :(
 #pragma warning disable CS8600 // Disable nullable warning for the unsafe cast from resources.
             _trayIcon.Icon = (Icon)resources.GetObject("_trayIcon.Icon");
-            //
+            // 
             // TrayApp
-            //
+            // 
             ClientSize = new Size(496, 220);
             Controls.Add(_alertIcon);
             Controls.Add(_availableRuntimesLabel);
