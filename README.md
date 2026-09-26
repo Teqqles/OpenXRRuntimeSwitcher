@@ -1,36 +1,33 @@
 # 📘 OpenXR Runtime Switcher
-A lightweight Windows utility for switching between installed OpenXR runtimes.
+A lightweight Windows utility for switching OpenXR runtimes and managing OpenXR API layers.
 
-OpenXR Runtime Switcher is a small, fast tool that lets you change the active OpenXR runtime on Windows without digging through registry keys or vendor‑specific settings. It automatically detects installed runtimes, shows friendly names and icons, and now adapts to **Windows dark mode**.
+OpenXR Runtime Switcher lets you change the active OpenXR runtime on Windows without digging through registry keys or vendor‑specific settings. It detects installed runtimes, shows friendly names and icons, lives in the system tray, and gives you full control over which implicit API layers load and in what order.
 
 ---
 
 ## ✨ Features
 
-### ✔ Detects installed OpenXR runtimes  
-SteamVR, Meta/Oculus, PimaxXR, Varjo, Windows Mixed Reality, and custom runtimes.
+### Runtime switching
+- **Detects installed OpenXR runtimes**: SteamVR, Meta/Oculus, PimaxXR, Varjo, Windows Mixed Reality, and custom runtimes.
+- **Accurate friendly names**: read from each runtime's JSON manifest, not guessed from file paths.
+- **Vendor icons**: clean logos for each runtime, with dark‑mode variants.
+- **Safe switching**: the Apply button is disabled while a VR session is active.
+- **Custom runtimes**: add any OpenXR runtime with a name, manifest path, and optional icon. Custom runtimes persist across restarts and are registered automatically on startup.
 
-### ✔ Add custom runtimes via UI (NEW)  
-Built-in dialog to add any OpenXR runtime with name, manifest path, and optional icon. Custom runtimes persist across restarts and are automatically registered on startup.
+### API layer management (NEW)
+- **View implicit API layers** from both user (`HKCU`) and system (`HKLM`) scope in one list, showing name, manifest path, scope, and enabled state.
+- **Reorder load order** with Move Up / Move Down. Reordering is transactional: if a registry write fails, the original order is restored.
+- **Enable / disable layers** without uninstalling them. Disabling is non‑destructive, so you can turn a layer back on at any time.
+- **Delete** stale or unwanted layer entries.
+- **Broken layer detection**: layers whose manifest file no longer exists are highlighted in red.
+- **Scope‑aware editing**: system‑scope layers can only be changed when running elevated.
 
-### ✔ Friendly names + icons  
-Clean vendor names and logos — no file paths.
-
-### ✔ Dark‑mode‑aware icons  
-The app detects Windows dark mode (via `.NET 9`’s `Application.IsDarkModeEnabled`) and automatically switches to dark‑mode icon variants for all supported runtimes.
-
-### ✔ System colour mode  
-The UI follows the system’s colour mode using:
-
-```csharp
-Application.SetColorMode(SystemColorMode.System);
-```
-
-### ✔ Manage OpenXR API layers (NEW)
-View registered implicit OpenXR API layers (user and system scope), reorder load order,
-enable/disable layers as a resumeable play/pause, and delete unwanted entries. Layers whose
-manifest path no longer exists are highlighted in red. System-scope edits require running
-the app as administrator.
+### Tray & desktop integration
+- **Tray icon** shows the current runtime at a glance.
+- **Global hotkeys** switch runtimes instantly, configured in `config.ini`.
+- **Toast notifications** on runtime change (can be disabled).
+- **Start with Windows** via Task Scheduler.
+- **Dark mode**: the UI follows the system colour mode and swaps to dark‑mode icon variants automatically.
 
 ## 🖼 UI Overview
 
@@ -46,12 +43,64 @@ The tray icon shows the current runtime.
 
 ![tray icon](https://github.com/Teqqles/OpenXRRuntimeSwitcher/raw/main/docs/images/tray_icon.png)
 
-## 🔍 How Runtime Detection Works
+## 🚀 How to Use
 
-Active Runtime (Registry + JSON)
-Reads:
+### Switching runtimes
 
+1. Launch the app
+2. Select a runtime from the dropdown
+3. Click **Apply**
+4. Restart any VR apps (if needed)
+
+### Adding custom runtimes
+
+1. Select "Add Custom Runtime..." from the dropdown
+2. Fill in the dialog:
+   - **Name:** Display name for your runtime
+   - **JSON Manifest:** Path to the OpenXR runtime manifest file
+   - **Image (Optional):** Path to an icon image
+3. Click OK
+
+Your custom runtime is saved and immediately available in the dropdown.
+
+**Testing without VR hardware?** See the `examples/` folder for sample files you can use to test the custom runtime feature.
+
+### Managing API layers
+
+1. Click **API Layers...** in the main window
+2. Select a layer in the list, then:
+   - **Move Up / Move Down**: change its position in the load order
+   - **Enable / Disable**: toggle whether the OpenXR loader uses it
+   - **Delete**: remove the layer's registry entry
+   - **Refresh**: reload the list from the registry
+3. Click **Close** when done
+
+Layers shown in red point to a manifest that no longer exists. These are usually left behind by an uninstalled tool and are safe to delete.
+
+### Hotkeys and settings
+
+Edit `config.ini` next to the executable:
+
+```ini
+[General]
+; Set to 1 to disable toast notifications when switching runtimes
+disableToast=0
+
+[Hotkeys]
+steamxr=Ctrl+Shift+Alt+F7
+oculus_openxr=Ctrl+Shift+Alt+F8
+pimax=Ctrl+Shift+Alt+F9
+```
+
+## 🔍 How It Works
+
+### Runtime detection
+Reads the active runtime from:
+
+```
 HKLM\SOFTWARE\Khronos\OpenXR\1\ActiveRuntime
+```
+
 Then parses the JSON manifest:
 
 ```json
@@ -65,28 +114,15 @@ Then parses the JSON manifest:
 
 This gives the true friendly name.
 
-## 🚀 How to Use
+### API layers
+Implicit layers are registered as DWORD values under:
 
-Launch the app
+```
+HKCU\SOFTWARE\Khronos\OpenXR\1\ApiLayers\Implicit
+HKLM\SOFTWARE\Khronos\OpenXR\1\ApiLayers\Implicit
+```
 
-Select a runtime from the dropdown
-
-Click Apply
-
-Restart any VR apps (if needed)
-
-### Adding Custom Runtimes
-
-1. Select "Add Custom Runtime..." from the dropdown
-2. Fill in the dialog:
-   - **Name:** Display name for your runtime
-   - **JSON Manifest:** Path to the OpenXR runtime manifest file
-   - **Image (Optional):** Path to an icon image
-3. Click OK
-
-Your custom runtime is saved and immediately available in the dropdown.
-
-**Testing without VR hardware?** See the `examples/` folder for sample files you can use to test the custom runtime feature.
+Each value name is a layer manifest path; a value of `0` means enabled and non‑zero means disabled. Value order determines load order.
 
 ## 🧩 Supported Runtimes
 
@@ -99,39 +135,11 @@ Your custom runtime is saved and immediately available in the dropdown.
 | Windows Mixed Reality |	? | Untested |
 | Custom runtimes |	✔ | |
 
-## Alternatives
-
-| Feature / Capability | **Teqqles / OpenXRRuntimeSwitcher** | **WaGi‑Coding / OpenXR‑Runtime‑Switcher** | **Ybalrid / OpenXR‑Runtime‑Manager** |
-| --- | --- | --- | --- |
-| **Primary purpose** | Modern Windows utility to switch OpenXR runtimes with friendly UI and hotkeys | Simple tool to switch system default OpenXR runtime | Utility to view & switch current OpenXR runtime |
-| **UI framework** | WinForms (.NET 9 features, dark‑mode aware) | WinForms (older .NET style) | Fluent UI (recent upgrade) |
-| **Runtime detection method** | Registry + JSON manifest parsing (accurate friendly names) | Registry presets; does *not* validate JSON | OpenXR enumeration + known manifest paths |
-| **Supported runtimes** | SteamVR, Meta/Oculus, PimaxXR, Varjo (untested), WMR (untested), custom | SteamVR, Oculus/Meta, ViveVR, WMR, Varjo, custom | SteamVR, Oculus, MixedRealityRuntime, Varjo |
-| **Custom runtime support** | ✔ Add via UI with persistence | ✔ Manual registry editing | ❌ No |
-| **Dark mode support** | ✔ Full dark‑mode UI + icon variants | ❌ None | ✔ Fluent UI (implicitly dark‑mode friendly) |
-| **Tray icon integration** | ✔ Shows current runtime | ❌ None | ❌ None |
-| **Admin rights handling** | Requires admin | Requires admin | Requires admin |
-| **32‑bit runtime handling** | ❌ Does not handle 32‑bit | Not mentioned | ❌ Does not handle 32‑bit |
-| **Installer / packaging** | NSIS installer + ZIP | Standalone executable | Standalone executable |
-| **Last updated** | **Active (2026)** | 2022 | **Active (2026)** |
-| **Stars / activity** | 1 star (new project) | 102 stars | 18 stars |
-| **License** | MIT | Custom license (similar to MIT) | MIT |
-
-### 🔎 Summary
-Teqqles/OpenXRRuntimeSwitcher (this repo)
-Dark mode, icons, accurate detection, tray integration and hotkeys.
-
-[WaGi‑Coding/OpenXR-Runtime-Switcher](https://github.com/WaGi-Coding/OpenXR-Runtime-Switcher)
-The classic tool. Simple, functional, supports many runtimes, but lacks safety checks and modern UI. Requires admin elevation and doesn’t validate JSON manifests.
-
-[Ybalrid/OpenXR-Runtime-Manager](https://github.com/Ybalrid/OpenXR-Runtime-Manager/tree/master)
-Lightweight and clean, recently updated with Fluent UI. Good detection logic but fewer features overall, no tray icon, and hotkeys.
-
-If you know of another tool not mentioned above, submit an issue!
+32‑bit runtimes are not currently handled.
 
 ## 🛠 Development Notes
 
-Written in C# / .NET
+Written in C# / .NET 9
 
 Uses WinForms for the UI
 
@@ -167,7 +175,7 @@ For more details, see [`src/OpenXRRuntimeSwitcher/installer/README-INSTALLER.md`
 
 ## 📄 License
 
-MIT License — free to use, modify, and distribute.
+MIT License: free to use, modify, and distribute.
 
 ## 🤝 Contributing
 
