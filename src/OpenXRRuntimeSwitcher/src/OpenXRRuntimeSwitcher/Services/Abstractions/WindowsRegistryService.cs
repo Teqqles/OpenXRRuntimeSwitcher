@@ -27,20 +27,12 @@ public sealed class WindowsRegistryService : IRegistryService
         return dict;
     }
 
-    public void WriteValue(string keyPath, string valueName, string value)
-    {
-        try
+    public void WriteValue(string keyPath, string valueName, string value) =>
+        RequireAdmin("the OpenXR runtime", () =>
         {
             using var key = Registry.LocalMachine.OpenSubKey(keyPath, writable: true);
             key?.SetValue(valueName, value, RegistryValueKind.String);
-        }
-        catch (UnauthorizedAccessException)
-        {
-            throw new InvalidOperationException(
-                "Administrator privileges are required to change the OpenXR runtime."
-            );
-        }
-    }
+        });
 
     private static RegistryKey RootFor(RegistryHive hive) =>
         hive == RegistryHive.CurrentUser ? Registry.CurrentUser : Registry.LocalMachine;
@@ -63,33 +55,29 @@ public sealed class WindowsRegistryService : IRegistryService
         return list;
     }
 
-    public void WriteDword(RegistryHive hive, string keyPath, string valueName, int data)
-    {
-        try
+    public void WriteDword(RegistryHive hive, string keyPath, string valueName, int data) =>
+        RequireAdmin("OpenXR API layers", () =>
         {
             using var key = RootFor(hive).CreateSubKey(keyPath, writable: true);
             key.SetValue(valueName, data, RegistryValueKind.DWord);
-        }
-        catch (UnauthorizedAccessException)
-        {
-            throw new InvalidOperationException(
-                "Administrator privileges are required to change OpenXR API layers.");
-        }
-    }
+        });
 
-    public void DeleteValue(RegistryHive hive, string keyPath, string valueName)
+    public void DeleteValue(RegistryHive hive, string keyPath, string valueName) =>
+        RequireAdmin("OpenXR API layers", () =>
+        {
+            using var key = RootFor(hive).OpenSubKey(keyPath, writable: true);
+            key?.DeleteValue(valueName, throwOnMissingValue: false);
+        });
+
+    private static void RequireAdmin(string target, Action write)
     {
         try
         {
-            using var key = RootFor(hive).OpenSubKey(keyPath, writable: true);
-            if (key?.GetValue(valueName) is not null)
-                key.DeleteValue(valueName, throwOnMissingValue: false);
+            write();
         }
         catch (UnauthorizedAccessException)
         {
-            throw new InvalidOperationException(
-                "Administrator privileges are required to change OpenXR API layers.");
+            throw new InvalidOperationException($"Administrator privileges are required to change {target}.");
         }
     }
-
 }
