@@ -16,8 +16,7 @@ namespace OpenXRRuntimeSwitcher.Services
                     return false;
                 }
 
-                var path = manifestPath.Trim().Trim('"');
-                path = Environment.ExpandEnvironmentVariables(path);
+                var path = NormalizePath(manifestPath);
 
                 if (!File.Exists(path))
                 {
@@ -88,29 +87,34 @@ namespace OpenXRRuntimeSwitcher.Services
             return Path.GetFullPath(Path.Combine(manifestDir, expandedPath));
         }
 
-        /// <summary>
-        /// Attempts to read the JSON manifest and extract the "runtime"."name" property.
-        /// Returns null when the name is not available or the file cannot be read.
-        /// </summary>
-        public static string? TryReadRuntimeName(string manifestPath)
+        /// <summary>Returns the "runtime"."name" property, or null if unavailable.</summary>
+        public static string? TryReadRuntimeName(string manifestPath) => TryReadName(manifestPath, "runtime");
+
+        /// <summary>Returns the "api_layer"."name" property, or null if unavailable.</summary>
+        public static string? TryReadApiLayerName(string manifestPath) => TryReadName(manifestPath, "api_layer");
+
+        public static bool ManifestExists(string manifestPath)
+        {
+            try { return !string.IsNullOrWhiteSpace(manifestPath) && File.Exists(NormalizePath(manifestPath)); }
+            catch { return false; }
+        }
+
+        private static string NormalizePath(string manifestPath) =>
+            Environment.ExpandEnvironmentVariables(manifestPath.Trim().Trim('"'));
+
+        private static string? TryReadName(string manifestPath, string rootProperty)
         {
             try
             {
-                if (string.IsNullOrWhiteSpace(manifestPath))
+                if (!ManifestExists(manifestPath))
                     return null;
 
-                var path = manifestPath.Trim().Trim('"');
-                path = Environment.ExpandEnvironmentVariables(path);
-
-                if (!File.Exists(path))
-                    return null;
-
-                using var stream = File.OpenRead(path);
+                using var stream = File.OpenRead(NormalizePath(manifestPath));
                 using var doc = JsonDocument.Parse(stream);
 
-                if (doc.RootElement.TryGetProperty("runtime", out var runtimeElm)
-                    && runtimeElm.ValueKind == JsonValueKind.Object
-                    && runtimeElm.TryGetProperty("name", out var nameElm)
+                if (doc.RootElement.TryGetProperty(rootProperty, out var rootElm)
+                    && rootElm.ValueKind == JsonValueKind.Object
+                    && rootElm.TryGetProperty("name", out var nameElm)
                     && nameElm.ValueKind == JsonValueKind.String)
                 {
                     var name = nameElm.GetString();

@@ -44,3 +44,41 @@ public sealed class OpenXRManifestReaderTests
         }
     }
 }
+
+public sealed class OpenXRManifestReaderApiLayerTests
+{
+    [Fact]
+    public void TryReadApiLayerName_ReturnsName_WhenValidManifest()
+    {
+        var temp = Path.GetTempFileName();
+        try
+        {
+            File.WriteAllText(temp, @"{ ""api_layer"": { ""name"": ""XR_APILAYER_TEST"" } }");
+            Assert.Equal("XR_APILAYER_TEST", OpenXRManifestReader.TryReadApiLayerName(temp));
+            Assert.Null(OpenXRManifestReader.TryReadRuntimeName(temp));
+        }
+        finally
+        {
+            File.Delete(temp);
+        }
+    }
+
+    [Fact]
+    public void ManifestExists_ExpandsEnvironmentVariablesAndQuotes()
+    {
+        var temp = Path.GetTempFileName();
+        try
+        {
+            Environment.SetEnvironmentVariable("OXR_MANIFEST_TEST_DIR", Path.GetDirectoryName(temp));
+            var viaEnv = "\"%OXR_MANIFEST_TEST_DIR%\\" + Path.GetFileName(temp) + "\"";
+            Assert.True(OpenXRManifestReader.ManifestExists(viaEnv));
+            Assert.False(OpenXRManifestReader.ManifestExists(""));
+            Assert.False(OpenXRManifestReader.ManifestExists(temp + ".missing"));
+        }
+        finally
+        {
+            Environment.SetEnvironmentVariable("OXR_MANIFEST_TEST_DIR", null);
+            File.Delete(temp);
+        }
+    }
+}
