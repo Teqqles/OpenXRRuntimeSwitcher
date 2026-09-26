@@ -55,14 +55,12 @@ public sealed class ApiLayerService : IApiLayerService
         var current = _registry.ReadDwordValues(hive, ImplicitKey).ToList();
         var dataByPath = current.ToDictionary(v => v.Name, v => v.Data);
 
-        // Final sequence: requested order first (only those that exist), then any leftovers.
-        var final = new List<string>();
-        foreach (var path in orderedManifestPaths)
-            if (dataByPath.ContainsKey(path) && !final.Contains(path))
-                final.Add(path);
-        foreach (var v in current)
-            if (!final.Contains(v.Name))
-                final.Add(v.Name);
+        // Requested order first (existing paths only), then any leftovers.
+        var final = orderedManifestPaths
+            .Where(dataByPath.ContainsKey)
+            .Concat(current.Select(v => v.Name))
+            .Distinct()
+            .ToList();
 
         // Delete all, then re-add in order (loader honors registry enumeration order).
         // Non-atomic: if a write fails after the deletes, restore the original snapshot
