@@ -108,37 +108,27 @@ public sealed class ManageApiLayersForm : Form
         _toggleButton.Text = layer is { Enabled: true } ? "Disable" : "Enable";
     }
 
+    private List<string> ScopePaths(LayerScope scope) => _list.Items.Cast<ListViewItem>()
+        .Select(i => (ApiLayer)i.Tag!)
+        .Where(l => l.Scope == scope)
+        .Select(l => l.ManifestPath)
+        .ToList();
+
     // Move is valid only within the same scope (loader reads each hive separately).
     private bool CanMove(ApiLayer layer, int delta)
     {
-        var index = _list.SelectedIndices.Count > 0 ? _list.SelectedIndices[0] : -1;
-        var target = index + delta;
-        if (target < 0 || target >= _list.Items.Count) return false;
-        var neighbour = (ApiLayer)_list.Items[target].Tag!;
-        return neighbour.Scope == layer.Scope;
+        var paths = ScopePaths(layer.Scope);
+        var target = paths.IndexOf(layer.ManifestPath) + delta;
+        return target >= 0 && target < paths.Count;
     }
 
-    private void MoveSelected(int delta)
+    private void EditSelected(Action<ApiLayer> edit)
     {
         var layer = Selected;
-        if (layer is null || !CanMove(layer, delta)) return;
-        if (!layer.IsEditable(_isElevated)) return;
-
-        // Build the new order for this scope from the current on-screen order, then swap.
-        var scopePaths = _list.Items.Cast<ListViewItem>()
-            .Select(i => (ApiLayer)i.Tag!)
-            .Where(l => l.Scope == layer.Scope)
-            .Select(l => l.ManifestPath)
-            .ToList();
-
-        var from = scopePaths.IndexOf(layer.ManifestPath);
-        var to = from + delta;
-        if (to < 0 || to >= scopePaths.Count) return;
-        (scopePaths[from], scopePaths[to]) = (scopePaths[to], scopePaths[from]);
-
+        if (layer is null || !layer.IsEditable(_isElevated)) return;
         try
         {
-            _layers.Reorder(layer.Scope, scopePaths);
+            edit(layer);
             ReloadLayers();
             SelectByPath(layer.ManifestPath);
         }
@@ -148,45 +138,26 @@ public sealed class ManageApiLayersForm : Form
         }
     }
 
-    private void ToggleSelected()
+    private void MoveSelected(int delta) => EditSelected(layer =>
     {
-        var layer = Selected;
-        if (layer is null) return;
-        if (!layer.IsEditable(_isElevated)) return;
-        try
-        {
-            _layers.SetEnabled(layer, !layer.Enabled);
-            ReloadLayers();
-            SelectByPath(layer.ManifestPath);
-        }
-        catch (Exception ex)
-        {
-            ShowError(ex);
-        }
-    }
+        if (!CanMove(layer, delta)) return;
+        var paths = ScopePaths(layer.Scope);
+        var from = paths.IndexOf(layer.ManifestPath);
+        (paths[from], paths[from + delta]) = (paths[from + delta], paths[from]);
+        _layers.Reorder(layer.Scope, paths);
+    });
 
-    private void DeleteSelected()
+    private void ToggleSelected() => EditSelected(layer => _layers.SetEnabled(layer, !layer.Enabled));
+
+    private void DeleteSelected() => EditSelected(layer =>
     {
-        var layer = Selected;
-        if (layer is null) return;
-        if (!layer.IsEditable(_isElevated)) return;
-
         var confirm = MessageBox.Show(this,
             $"Remove this OpenXR API layer registration?\n\n{layer.ManifestPath}\n\n" +
             "This deletes the registry entry. To temporarily turn a layer off instead, use Disable.",
             "Delete API Layer", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
-        if (confirm != DialogResult.Yes) return;
-
-        try
-        {
+        if (confirm == DialogResult.Yes)
             _layers.Delete(layer);
-            ReloadLayers();
-        }
-        catch (Exception ex)
-        {
-            ShowError(ex);
-        }
-    }
+    });
 
     private void SelectByPath(string manifestPath)
     {
