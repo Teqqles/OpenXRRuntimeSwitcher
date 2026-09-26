@@ -168,7 +168,7 @@ namespace OpenXRRuntimeSwitcher
             _manageLayersButton.Size = new Size(110, 23);
             _manageLayersButton.TabIndex = 10;
             _manageLayersButton.Text = "API Layers...";
-            _manageLayersButton.Click += ManageLayersButton_Click;
+            _manageLayersButton.Click += ManageApiLayers_Click;
             //
             // _trayIcon
             // sadly Winforms designer doesn't support safe casts :(
@@ -218,7 +218,7 @@ namespace OpenXRRuntimeSwitcher
             var menu = new ContextMenuStrip();
             menu.Items.Add("Open", null, MenuOpen_Click);
             menu.Items.Add("Refresh", null, MenuRefresh_Click);
-            menu.Items.Add("Manage API Layers...", null, MenuManageApiLayers_Click);
+            menu.Items.Add("Manage API Layers...", null, ManageApiLayers_Click);
             menu.Items.Add("Exit", null, MenuExit_Click);
             return menu;
         }
@@ -259,10 +259,9 @@ namespace OpenXRRuntimeSwitcher
 
         private void MenuOpen_Click(object? sender, System.EventArgs e) => ShowWindow();
         private void MenuRefresh_Click(object? sender, System.EventArgs e) => ManualRefresh();
-        private void MenuManageApiLayers_Click(object? sender, System.EventArgs e) => ShowManageApiLayersDialog();
         private void MenuExit_Click(object? sender, System.EventArgs e) => Application.Exit();
 
-        private void ManageLayersButton_Click(object? sender, System.EventArgs e) => ShowManageApiLayersDialog();
+        private void ManageApiLayers_Click(object? sender, System.EventArgs e) => ShowManageApiLayersDialog();
 
         private void ShowWindow()
         {
