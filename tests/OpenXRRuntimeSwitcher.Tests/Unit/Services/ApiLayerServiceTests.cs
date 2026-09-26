@@ -184,4 +184,19 @@ public sealed class ApiLayerServiceTests
             Assert.Equal(originalValues[i].Data, afterFailure[i].Data);
         }
     }
+
+    [Fact]
+    public void Reorder_RollbackAlsoFails_RethrowsOriginalFailure()
+    {
+        var fake = new FakeRegistryService();
+        fake.WriteDword(RegistryHive.CurrentUser, Key, @"C:\a.json", 0);
+        fake.WriteDword(RegistryHive.CurrentUser, Key, @"C:\b.json", 1);
+        var svc = new ApiLayerService(fake);
+        fake.ThrowOnWriteDword = name => name == @"C:\b.json";
+
+        var ex = Assert.Throws<InvalidOperationException>(() =>
+            svc.Reorder(LayerScope.User, new[] { @"C:\b.json", @"C:\a.json" }));
+
+        Assert.StartsWith("Injected failure #1:", ex.Message);
+    }
 }
